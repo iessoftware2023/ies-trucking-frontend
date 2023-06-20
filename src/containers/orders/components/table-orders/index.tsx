@@ -186,6 +186,7 @@ export const TableOrders: React.FC = () => {
   return (
     <div>
       <Table
+        rowKey="id"
         columns={columns}
         dataSource={data}
         scroll={{ x: 1600 }}

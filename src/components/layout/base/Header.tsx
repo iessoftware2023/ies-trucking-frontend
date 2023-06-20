@@ -60,7 +60,6 @@ export const Header: React.FC<IProps> = ({
               ],
             }}
             trigger={["click"]}
-            overlayStyle={{ width: 128 }}
             getPopupContainer={(trigger) => trigger.parentElement}
           >
             <div className="flex items-center space-x-4">
