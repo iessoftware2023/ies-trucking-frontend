@@ -1,9 +1,31 @@
+@import "./reset.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+body {
+  @apply bg-gray-100;
+}
+
 .ant-btn-primary:not(.ant-btn-dangerous),
 .ant-btn-primary:not(.ant-btn-dangerous):hover,
 .ant-btn-primary:not(.ant-btn-dangerous):active {
-  color: #000;
+  @apply text-black;
+}
+
+.ant-menu-dark .ant-menu-item-selected {
+  @apply text-black;
+}
+
+.ant-layout .ant-layout-sider {
+  @apply bg-secondary-700;
+}
+
+.ant-tag {
+  @apply font-medium rounded-full px-2;
+}
+
+.ant-segmented .ant-segmented-item-selected {
+  @apply text-white;
 }

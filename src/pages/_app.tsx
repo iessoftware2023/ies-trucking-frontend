@@ -2,11 +2,10 @@ import "animate.css";
 import "antd/dist/reset.css";
 import "@/styles/globals.css";
 
-import { Inter } from "@next/font/google";
-import clsx from "clsx";
 import { getSnapshot } from "mobx-state-tree";
 import type { AppInitialProps, AppProps } from "next/app";
 import App from "next/app";
+import { Inter } from "next/font/google";
 import NextNprogress from "nextjs-progressbar";
 import { useMemo } from "react";
 
@@ -38,10 +37,7 @@ function IESWebApp({ Component, pageProps }: AppProps) {
       />
 
       <ThemeProvider>
-        <div
-          // eslint-disable-next-line tailwindcss/no-custom-classname
-          className={clsx(inter.className, "animate__animated animate__fadeIn")}
-        >
+        <div className={inter.className}>
           <Component {...pageProps} />
         </div>
       </ThemeProvider>

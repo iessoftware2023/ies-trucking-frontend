@@ -1,4 +1,4 @@
-import { cast, flow, types } from "mobx-state-tree";
+import { applySnapshot, cast, flow, getRoot, types } from "mobx-state-tree";
 import Nookies from "nookies";
 
 import { APP_CONSTANTS } from "@/constants";
@@ -9,6 +9,7 @@ import {
 } from "@/services/api";
 
 import { withEnvironment } from "../extensions/with-environment";
+import { RootStore } from "../root-store";
 import { UserModel } from "./user-model";
 
 export const AuthStoreModel = types
@@ -38,6 +39,13 @@ export const AuthStoreModel = types
 
         return true;
       }),
+
+      logout() {
+        Nookies.destroy(undefined, APP_CONSTANTS.AUTH);
+
+        const rootStore = getRoot<RootStore>(self);
+        applySnapshot(rootStore, {});
+      },
 
       getMe: flow(function* () {
         const res: RequestGetMeResult = yield self.apiAuth.getMe();

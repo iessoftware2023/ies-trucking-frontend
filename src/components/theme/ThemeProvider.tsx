@@ -27,6 +27,18 @@ export const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
             colorPrimary: "#282D3D",
             colorPrimaryHover: "#282D3D",
           },
+          Menu: {
+            itemBg: "#32394d",
+          },
+          Layout: {
+            colorBgBody: "transparent",
+          },
+          Segmented: {
+            colorBgLayout: "transparent",
+            controlPaddingHorizontal: 16,
+            itemSelectedBg: "#282D3D",
+            borderRadius: 999,
+          },
         },
       }}
     >

@@ -1,18 +1,63 @@
+import { Layout } from "antd";
+import { observer } from "mobx-react-lite";
 import Head from "next/head";
-import React, { PropsWithChildren } from "react";
+import { useRouter } from "next/router";
+import React, { PropsWithChildren, useState } from "react";
+
+import { useStores } from "@/models";
+
+import { Header } from "./Header";
+import { Sidebar } from "./Sidebar";
+import { IMenuActiveKey } from "./types";
 
 type IProps = PropsWithChildren<{
   title: string;
+  menuActiveKey?: IMenuActiveKey;
 }>;
 
-export const LayoutBase: React.FC<IProps> = ({ title, children }) => {
-  return (
-    <>
-      <Head>
-        <title>{title}</title>
-      </Head>
+export const LayoutBase: React.FC<IProps> = observer(
+  ({ title, menuActiveKey, children }) => {
+    const [collapsed, setCollapsed] = useState(false);
 
-      <div>{children}</div>
-    </>
-  );
-};
+    const { authStore } = useStores();
+
+    const router = useRouter();
+
+    const handleLogoutClick: React.MouseEventHandler<HTMLAnchorElement> = (
+      e
+    ) => {
+      e.preventDefault();
+
+      authStore.logout();
+      router.replace("/login", undefined);
+    };
+
+    return (
+      <>
+        <Head>
+          <title>{title}</title>
+        </Head>
+
+        <Layout hasSider>
+          <Sidebar
+            collapsed={collapsed}
+            menuActiveKey={menuActiveKey}
+            setCollapsed={setCollapsed}
+          />
+
+          <Layout
+            style={{ marginLeft: collapsed ? 80 : 224, transition: "all 0.2s" }}
+          >
+            <Header
+              user={authStore.user}
+              collapsed={collapsed}
+              onLogoutClick={handleLogoutClick}
+            />
+
+            <main>{children}</main>
+          </Layout>
+        </Layout>
+      </>
+    );
+  }
+);
