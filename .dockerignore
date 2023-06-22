@@ -1,0 +1,10 @@
+# compiled output
+node_modules
+.git
+.next
+.vscode
+
+README.md
+.gitignore
+.dockerignore
+Dockerfile
