@@ -1,4 +1,4 @@
-import { Alert, Button, Checkbox, Form, Input } from "antd";
+import { Alert, Button, Checkbox, Form, Input, notification } from "antd";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -33,7 +33,14 @@ const LoginContainerCom: React.FC = () => {
         );
       }
 
-      router.push("/");
+      notification.success({
+        message: "Login successfully",
+        description: "You have been logged in successfully.",
+        duration: 2000,
+        placement: "bottom",
+      });
+      await router.push("/");
+      notification.destroy();
       //
     } catch (error) {
       setError(error.message);
