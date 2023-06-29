@@ -12,11 +12,12 @@ import { IMenuActiveKey } from "./types";
 
 type IProps = PropsWithChildren<{
   title: string;
+  headerTitle?: string;
   menuActiveKey?: IMenuActiveKey;
 }>;
 
 export const LayoutBase: React.FC<IProps> = observer(
-  ({ title, menuActiveKey, children }) => {
+  ({ title, headerTitle, menuActiveKey, children }) => {
     const [collapsed, setCollapsed] = useState(false);
 
     const { authStore } = useStores();
@@ -49,6 +50,7 @@ export const LayoutBase: React.FC<IProps> = observer(
             style={{ marginLeft: collapsed ? 80 : 224, transition: "all 0.2s" }}
           >
             <Header
+              title={headerTitle}
               user={authStore.user}
               collapsed={collapsed}
               onLogoutClick={handleLogoutClick}

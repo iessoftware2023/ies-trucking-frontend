@@ -5,6 +5,7 @@ import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
+import Link from "next/link";
 import React, { useMemo } from "react";
 
 import { currencyFormat } from "@/utils/number";
@@ -227,7 +228,12 @@ export const TableOrders: React.FC<IProps> = ({
         align: "center",
         render: (_, record) => (
           <Space size="middle">
-            <a className="text-blue-500 underline">Detail</a>
+            <Link
+              href={`/order/${record.id}`}
+              className="text-blue-500 underline"
+            >
+              Detail
+            </Link>
 
             {checkCanCancelBooking(record.status) && (
               <Dropdown

@@ -7,6 +7,7 @@ import { UserAvatar } from "@/components/elements";
 import { IUser } from "@/models";
 
 type IProps = {
+  title?: string;
   user: IUser;
   collapsed: boolean;
   onBackClick?: React.MouseEventHandler<HTMLAnchorElement> &
@@ -15,6 +16,7 @@ type IProps = {
 };
 
 export const Header: React.FC<IProps> = ({
+  title = "Tracking",
   user,
   collapsed,
   onBackClick,
@@ -42,7 +44,7 @@ export const Header: React.FC<IProps> = ({
               />
             )}
 
-            <span>Tracking</span>
+            <span>{title}</span>
           </div>
 
           <Dropdown

@@ -6,6 +6,7 @@ import {
 } from "@ant-design/icons";
 import { Layout, Menu } from "antd";
 import clsx from "clsx";
+import { useRouter } from "next/router";
 import React from "react";
 
 import { IMenuActiveKey } from "./types";
@@ -21,6 +22,18 @@ export const Sidebar: React.FC<IProps> = ({
   menuActiveKey,
   setCollapsed,
 }) => {
+  const router = useRouter();
+
+  const handleMenuClick = (key: string) => {
+    switch (key) {
+      case "DASHBOARD":
+        router.push("/");
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <Layout.Sider
       width={224}
@@ -69,7 +82,7 @@ export const Sidebar: React.FC<IProps> = ({
 
         <Menu
           className="grow p-3"
-          onClick={(e) => console.log(e)}
+          onClick={(e) => handleMenuClick(e.key)}
           theme="dark"
           items={[
             {
