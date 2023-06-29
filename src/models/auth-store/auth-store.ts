@@ -2,14 +2,10 @@ import { applySnapshot, cast, flow, getRoot, types } from "mobx-state-tree";
 import Nookies from "nookies";
 
 import { APP_CONSTANTS } from "@/constants";
-import {
-  RequestGetMeResult,
-  RequestLoginBody,
-  RequestLoginResult,
-} from "@/services/api";
+import { OperatorAuthTypes } from "@/services/api/operator";
 
 import { withEnvironment } from "../extensions/with-environment";
-import { RootStore } from "../root-store";
+import { IRootStore } from "../root-store";
 import { UserModel } from "./user-model";
 
 export const AuthStoreModel = types
@@ -25,8 +21,12 @@ export const AuthStoreModel = types
         this.isAuth = isAuth;
       },
 
-      login: flow(function* (data: RequestLoginBody, isRememberMe?: boolean) {
-        const res: RequestLoginResult = yield self.apiAuth.login(data);
+      login: flow(function* (
+        data: OperatorAuthTypes.RequestLoginBody,
+        isRememberMe?: boolean
+      ) {
+        const res: OperatorAuthTypes.RequestLoginResult =
+          yield self.operatorAuthApi.login(data);
 
         if (res.kind !== "ok") {
           return false;
@@ -43,12 +43,13 @@ export const AuthStoreModel = types
       logout() {
         Nookies.destroy(undefined, APP_CONSTANTS.AUTH);
 
-        const rootStore = getRoot<RootStore>(self);
+        const rootStore = getRoot<IRootStore>(self);
         applySnapshot(rootStore, {});
       },
 
       getMe: flow(function* () {
-        const res: RequestGetMeResult = yield self.apiAuth.getMe();
+        const res: OperatorAuthTypes.RequestGetMeResult =
+          yield self.operatorAuthApi.getMe();
 
         if (res.kind !== "ok") {
           return null;

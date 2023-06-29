@@ -2,8 +2,8 @@ import { ApiResponse, ApisauceInstance } from "apisauce";
 
 import { IUser } from "@/models";
 
-import { Api } from "../api-core";
-import { returnResponse } from "../api-utilities";
+import { Api } from "../../api-core";
+import { returnResponse } from "../../api-utilities";
 import * as Types from "./type";
 
 const prefix = "/operator";
@@ -15,7 +15,7 @@ const routes = {
   login: () => `${prefix}/auth/login`,
 };
 
-export const AuthApi = {
+export const OperatorAuthApi = {
   async getMe(): Promise<Types.RequestGetMeResult> {
     const url = routes.getMe();
     const result: ApiResponse<IUser> = await api.get(url);

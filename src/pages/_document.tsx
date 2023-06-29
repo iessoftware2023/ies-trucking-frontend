@@ -7,6 +7,11 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
+        {/* Polyfill Intl.NumberFormat, its dependencies & en, vi locale data */}
+        <script
+          async={false}
+          src="https://polyfill.io/v3/polyfill.min.js?features=Intl.NumberFormat,Intl.NumberFormat.~locale.en,Intl.NumberFormat.~locale.vi"
+        />
         <script dangerouslySetInnerHTML={{ __html: scriptEnv }} />
       </Head>
       <body>

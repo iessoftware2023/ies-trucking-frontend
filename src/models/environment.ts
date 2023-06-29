@@ -1,5 +1,5 @@
-import { AuthApi } from "@/services/api";
+import { OperatorAuthApi } from "@/services/api/operator";
 
 export class Environment {
-  public apiAuth: typeof AuthApi;
+  public apiAuth: typeof OperatorAuthApi;
 }

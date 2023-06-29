@@ -1,6 +1,10 @@
 import { getEnv, IStateTreeNode } from "mobx-state-tree";
 
-import { AuthApi } from "@/services/api";
+import {
+  OperatorAuthApi,
+  OperatorBookingApi,
+  OperatorOrderApi,
+} from "@/services/api/operator";
 
 import { Environment } from "../environment";
 
@@ -12,6 +16,8 @@ export const withEnvironment = (self: IStateTreeNode) => ({
     },
   },
   state: {
-    apiAuth: AuthApi,
+    operatorAuthApi: OperatorAuthApi,
+    operatorBookingApi: OperatorBookingApi,
+    operatorOrderApi: OperatorOrderApi,
   },
 });

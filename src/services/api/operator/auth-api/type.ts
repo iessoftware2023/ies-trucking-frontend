@@ -1,14 +1,8 @@
 import { IUser } from "@/models";
 
-import { GeneralApiProblem } from "../api-problem";
-import { Response } from "../api-utilities";
+import { Response } from "../../type";
 
-export type RequestGetMeResult =
-  | {
-      kind: `ok`;
-      result: IUser;
-    }
-  | GeneralApiProblem;
+export type RequestGetMeResult = Response<IUser>;
 
 export type RequestLoginBody = {
   email: string;

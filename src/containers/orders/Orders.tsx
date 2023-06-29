@@ -1,22 +1,196 @@
-import { Segmented } from "antd";
+import { Button, Input, Segmented } from "antd";
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
+
+import { useInterval } from "@/hooks";
+import { useStores } from "@/models";
 
 import { TableOrders } from "./components";
+import { DrawerFilter, IFormFilterValues } from "./components/drawer-filter";
+import {
+  convertBookingsToTable,
+  convertOrdersToTable,
+  getBookingSearchField,
+  getOrderSearchField,
+} from "./components/table-orders/utils";
+import { REFRESH_DATA_INTERVAL, TRACKING_TABS } from "./constants";
+import { ITrackingTabKey } from "./types";
+import { handleTrackingFilter } from "./utils";
+
+dayjs.extend(isBetween);
 
 const OrdersContainerCom: React.FC = () => {
+  const { operatorStore } = useStores();
+
+  const [tabKey, setTabKey] = useState<ITrackingTabKey>("WAITING_ASSIGN");
+  const [isLoading, setIsLoading] = useState(false);
+  const [refreshFlag, setRefreshFlag] = useState("");
+
+  const [isOpenFilter, setIsOpenFilter] = useState(false);
+
+  const [formFilterValues, setFormFilterValues] = useState<IFormFilterValues>();
+
+  const isAppliedFilter =
+    formFilterValues?.dateRange?.length || formFilterValues?.status?.length;
+
+  const fetchData = async (shouldLoading = true) => {
+    if (shouldLoading) {
+      setIsLoading(true);
+    }
+
+    if (tabKey === "WAITING_ASSIGN") {
+      console.log("get bookings");
+      await operatorStore.bookingStore.getBookings();
+    } else {
+      console.log("get orders");
+      await operatorStore.orderStore.getOrders();
+    }
+
+    setRefreshFlag(new Date().toISOString());
+
+    if (shouldLoading) {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAssignDriver = async (bookingId: string, driverId: string) => {
+    const res = await operatorStore.bookingStore.assignDriver(
+      bookingId,
+      driverId
+    );
+
+    if (res.kind === "conflict") {
+      const content = res.errors?.[0]?.message || "Failed to assign driver";
+      toast.error(content);
+      return false;
+    }
+
+    if (res.kind !== "ok") {
+      toast.error("Failed to assign driver");
+      return false;
+    }
+
+    toast.success("Assign driver successfully");
+    fetchData(true);
+
+    return true;
+  };
+
+  const handleCancelBooking = async (bookingId: string) => {
+    const res = await operatorStore.bookingStore.cancelBooking(bookingId);
+
+    if (res.kind === "conflict") {
+      const content = res.errors?.[0]?.message || "Failed to cancel booking";
+      toast.error(content);
+      return false;
+    }
+
+    if (res.kind !== "ok") {
+      toast.error("Failed to cancel booking");
+      return false;
+    }
+
+    toast.success("Cancel booking successfully");
+    fetchData(true);
+
+    return true;
+  };
+
+  const handleApplyFilter = (values: IFormFilterValues) => {
+    setFormFilterValues(values);
+    setIsOpenFilter(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabKey]);
+
+  useInterval(() => {
+    fetchData(false);
+  }, REFRESH_DATA_INTERVAL);
+
+  const tableData = useMemo(() => {
+    if (tabKey === "WAITING_ASSIGN") {
+      const bookings = operatorStore.bookingStore.bookingsView.filter(
+        (booking) => {
+          return handleTrackingFilter(formFilterValues, {
+            tabKey,
+            date: booking.pickupTime,
+            status: booking.status,
+            searchField: getBookingSearchField(booking),
+          });
+        }
+      );
+      return convertBookingsToTable(bookings);
+    }
+
+    const orders = operatorStore.orderStore.ordersView.filter((order) => {
+      return handleTrackingFilter(formFilterValues, {
+        tabKey,
+        date: order.booking.pickupTime,
+        status: order.status,
+        searchField: getOrderSearchField(order),
+      });
+    });
+
+    return convertOrdersToTable(orders);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshFlag, formFilterValues]);
+
   return (
     <div>
-      <div className="border-b bg-white p-4">
+      <div className="flex space-x-4 border-b bg-white p-4">
         <Segmented
-          options={["Waitting Assign", "On-going", "History"]}
+          options={TRACKING_TABS}
           size="large"
+          value={tabKey}
+          onChange={(key: ITrackingTabKey) => setTabKey(key)}
         />
+
+        <div className="flex-1" />
+
+        <Input.Search
+          placeholder="Search"
+          style={{ width: 256 }}
+          onSearch={(value) => {
+            setFormFilterValues((prevValues) => {
+              return {
+                ...prevValues,
+                search: value,
+              };
+            });
+          }}
+          allowClear
+        />
+        <Button
+          type={isAppliedFilter ? "primary" : "default"}
+          icon={<i className="far fa-filter" />}
+          onClick={() => setIsOpenFilter(true)}
+        >
+          {isAppliedFilter ? "Update Filter" : "Add Filter"}
+        </Button>
       </div>
 
       <div className="p-4">
-        <TableOrders />
+        <TableOrders
+          data={tableData}
+          onAssignDriver={handleAssignDriver}
+          onCancelBooking={handleCancelBooking}
+          isLoading={isLoading}
+        />
       </div>
+
+      <DrawerFilter
+        isOpen={isOpenFilter}
+        tabKey={tabKey}
+        initialValues={formFilterValues}
+        onSubmit={handleApplyFilter}
+        onClose={() => setIsOpenFilter(false)}
+      />
     </div>
   );
 };

@@ -1,1 +1,1 @@
-export const envs = ["API_URL"];
+export const envs = ["API_URL", "GOOGLE_MAPS_API_KEY", "REFRESH_DATA_INTERVAL"];

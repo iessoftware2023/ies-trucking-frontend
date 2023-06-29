@@ -2,6 +2,7 @@
 declare interface ENVIRONMENT {
   API_URL: string;
   GOOGLE_MAPS_API_KEY: string;
+  REFRESH_DATA_INTERVAL: string;
 }
 
 declare interface Window {

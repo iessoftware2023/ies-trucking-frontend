@@ -4,7 +4,7 @@ import { NextPageContext } from "next";
 import Nookies from "nookies";
 
 import { APP_CONSTANTS } from "@/constants";
-import { RootStore } from "@/models/root-store";
+import { IRootStore } from "@/models/root-store";
 
 const { API_URL } = envGlobal();
 
@@ -42,7 +42,7 @@ class Api {
 
   public static setToken(
     ctx: NextPageContext & {
-      store?: RootStore;
+      store?: IRootStore;
     }
   ) {
     const cookies = Nookies.get(ctx);

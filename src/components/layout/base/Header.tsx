@@ -22,7 +22,7 @@ export const Header: React.FC<IProps> = ({
 }) => {
   return (
     <>
-      <header className="fixed right-0 top-0 z-[9998] w-full">
+      <header className="fixed right-0 top-0 z-50 w-full">
         <div
           className={clsx(
             "flex h-[72px] items-center border-b bg-white px-4 transition-all duration-200",

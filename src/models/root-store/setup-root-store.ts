@@ -4,9 +4,9 @@ import { NextPageContext } from "next";
 import { Api } from "@/services/api";
 
 import { Environment } from "../environment";
-import { RootStore, RootStoreModel, RootStoreSnapshot } from "./root-store";
+import { IRootStore, IRootStoreSnapshot, RootStoreModel } from "./root-store";
 
-let store: RootStore | undefined;
+let store: IRootStore | undefined;
 
 export function createEnvironment(ctx?: NextPageContext): Environment {
   const env = new Environment();
@@ -15,9 +15,9 @@ export function createEnvironment(ctx?: NextPageContext): Environment {
 }
 
 export function initializeStore(
-  snapshot?: RootStoreSnapshot | null,
+  snapshot?: IRootStoreSnapshot | null,
   ctx?: NextPageContext
-): RootStore {
+): IRootStore {
   const env = createEnvironment(ctx);
 
   const _store = store ?? RootStoreModel.create({}, env);

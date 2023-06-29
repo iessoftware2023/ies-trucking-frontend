@@ -1,8 +1,7 @@
 import { ApiResponse } from "apisauce";
 
-import { GeneralApiProblem, getGeneralApiProblem } from "./api-problem";
-
-export type Response<T> = { kind: `ok`; result: T } | GeneralApiProblem;
+import { getGeneralApiProblem } from "./api-problem";
+import { Response } from "./type";
 
 export function returnResponse<T>(result: ApiResponse<T>): Response<T> {
   if (!result.ok || result.problem) {
