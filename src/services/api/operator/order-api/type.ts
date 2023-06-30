@@ -5,3 +5,6 @@ import { Response } from "../../type";
 export type RequestGetOrdersResult = Response<IOrder[]>;
 
 export type RequestGetOrderResult = Response<IOrder>;
+
+export type RequestCancelOrderResponse = boolean;
+export type RequestCancelOrderResult = Response<boolean>;

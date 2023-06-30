@@ -14,7 +14,7 @@ const EmptyDriver = () => {
         <UserAddOutlined />
       </span>
 
-      <span>Assignee</span>
+      <span>Assign Driver</span>
     </div>
   );
 };
@@ -61,6 +61,10 @@ const DriverOptions: React.FC<{
           />
         );
       })}
+
+      {!options.length && (
+        <div className="px-3 py-1 text-gray-400">No suitable driver</div>
+      )}
     </div>
   );
 };

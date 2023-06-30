@@ -23,6 +23,13 @@ export const BookingConfigModel = types.model("BookingConfigModel").props({
   cargoWeights: types.array(CargoWeightsModel),
 });
 
+export const BOOKING_STATUS_AS_CONST = [
+  "pending",
+  "confirmed",
+  "cancelled",
+  "expired",
+] as const;
+
 export const BookingModel = types
   .model("BookingModel")
   .props({
@@ -80,8 +87,16 @@ export const BookingModel = types
     // truckTypeId: types.maybeNull(types.string),
     // parkingId: types.maybeNull(types.string),
     // customerId: types.maybeNull(types.string),
-    cargoType: types.maybeNull(types.string),
-    cargoWeight: types.maybeNull(types.string),
+    cargoType: types.maybeNull(
+      types.model("CargoTypeModel").props({
+        name: types.maybeNull(types.string),
+      })
+    ),
+    cargoWeight: types.maybeNull(
+      types.model("CargoWeightModel").props({
+        name: types.maybeNull(types.string),
+      })
+    ),
     cargoSize: types.maybeNull(
       types.model({
         height: types.maybeNull(types.number),
@@ -93,12 +108,7 @@ export const BookingModel = types
     duration: types.maybeNull(types.number),
     cost: types.maybeNull(types.number),
     currency: types.maybeNull(types.string),
-    status: types.enumeration("BookingStatus", [
-      "pending",
-      "confirmed",
-      "cancelled",
-      "expired",
-    ]),
+    status: types.enumeration("BookingStatus", [...BOOKING_STATUS_AS_CONST]),
     order: types.maybeNull(
       types.model({
         id: types.maybeNull(types.string),
@@ -135,3 +145,4 @@ export const BookingModel = types
   }));
 
 export type IBooking = Instance<typeof BookingModel>;
+export type IBookingStatus = (typeof BOOKING_STATUS_AS_CONST)[number];

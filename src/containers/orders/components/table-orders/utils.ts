@@ -8,8 +8,11 @@ export const convertBookingsToTable = (bookings: IBooking[]): ITableRow[] => {
   return bookings.map((booking) => {
     return {
       id: booking.id,
+      bookingId: booking.id,
+      orderId: null,
       code: booking.code,
-      status: booking.status,
+      bookingStatus: booking.status,
+      orderStatus: null,
       driver: null,
       drivers: booking.drivers ?? [],
       pickUpLocation: booking.pickup?.address,
@@ -33,8 +36,11 @@ export const convertOrdersToTable = (orders: IOrder[]): ITableRow[] => {
   return orders.map((order) => {
     return {
       id: order.id,
+      bookingId: order.booking?.id,
+      orderId: order.id,
       code: order.booking?.code,
-      status: order.status,
+      bookingStatus: order.booking?.status,
+      orderStatus: order.status,
       driver: {
         id: order.driver?.id,
         name: order.driver?.name,

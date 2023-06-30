@@ -1,9 +1,8 @@
-import { Button, Input, Segmented } from "antd";
+import { Button, Input, notification, Segmented } from "antd";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
 
 import { useInterval } from "@/hooks";
 import { useStores } from "@/models";
@@ -23,6 +22,8 @@ import { handleTrackingFilter } from "./utils";
 dayjs.extend(isBetween);
 
 const OrdersContainerCom: React.FC = () => {
+  const [noti, notiContextHolder] = notification.useNotification();
+
   const { operatorStore } = useStores();
 
   const [tabKey, setTabKey] = useState<ITrackingTabKey>("WAITING_ASSIGN");
@@ -64,16 +65,16 @@ const OrdersContainerCom: React.FC = () => {
 
     if (res.kind === "conflict") {
       const content = res.errors?.[0]?.message || "Failed to assign driver";
-      toast.error(content);
+      noti.error({ message: content });
       return false;
     }
 
     if (res.kind !== "ok") {
-      toast.error("Failed to assign driver");
+      noti.error({ message: "Failed to assign driver" });
       return false;
     }
 
-    toast.success("Assign driver successfully");
+    noti.success({ message: "Assign driver successfully" });
     fetchData(true);
 
     return true;
@@ -84,16 +85,36 @@ const OrdersContainerCom: React.FC = () => {
 
     if (res.kind === "conflict") {
       const content = res.errors?.[0]?.message || "Failed to cancel booking";
-      toast.error(content);
+      noti.error({ message: content });
       return false;
     }
 
     if (res.kind !== "ok") {
-      toast.error("Failed to cancel booking");
+      noti.error({ message: "Failed to cancel booking" });
       return false;
     }
 
-    toast.success("Cancel booking successfully");
+    noti.success({ message: "Cancel booking successfully" });
+    fetchData(true);
+
+    return true;
+  };
+
+  const handleCancelOrder = async (orderId: string) => {
+    const res = await operatorStore.orderStore.cancelOrder(orderId);
+
+    if (res.kind === "conflict") {
+      const content = res.errors?.[0]?.message || "Failed to cancel order";
+      noti.error({ message: content });
+      return false;
+    }
+
+    if (res.kind !== "ok") {
+      noti.error({ message: "Failed to cancel order" });
+      return false;
+    }
+
+    noti.success({ message: "Cancel order successfully" });
     fetchData(true);
 
     return true;
@@ -178,9 +199,11 @@ const OrdersContainerCom: React.FC = () => {
       <div className="p-4">
         <TableOrders
           data={tableData}
+          isLoading={isLoading}
+          //
           onAssignDriver={handleAssignDriver}
           onCancelBooking={handleCancelBooking}
-          isLoading={isLoading}
+          onCancelOrder={handleCancelOrder}
         />
       </div>
 
@@ -191,6 +214,8 @@ const OrdersContainerCom: React.FC = () => {
         onSubmit={handleApplyFilter}
         onClose={() => setIsOpenFilter(false)}
       />
+
+      {notiContextHolder}
     </div>
   );
 };

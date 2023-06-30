@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 
+import { IBookingStatus, IOrderStatus } from "@/models/operator";
 import { search } from "@/utils/string";
 
 import { IFormFilterValues } from "./components/drawer-filter";
@@ -38,10 +39,24 @@ export const handleTrackingFilter = (
   return filterTabKey && filterSearch && filterDateRange && filterStatus;
 };
 
-export const checkCanCancelBooking = (status: string) => {
-  return ["pending", "order_placed"].includes(status);
+export const checkCanAssignDriver = (
+  bookingStatus: IBookingStatus,
+  orderStatus: IOrderStatus
+) => {
+  if (bookingStatus === "pending") {
+    return true;
+  }
+
+  if (bookingStatus === "confirmed") {
+    return orderStatus === "order_placed";
+  }
+
+  return false;
 };
 
-export const checkCanAssignDriver = (status: string) => {
-  return ["pending", "order_placed"].includes(status);
+export const checkCanCancelBooking = (
+  bookingStatus: IBookingStatus,
+  orderStatus: IOrderStatus
+) => {
+  return checkCanAssignDriver(bookingStatus, orderStatus);
 };

@@ -46,9 +46,9 @@ export const OperatorBookingApi = {
   async cancelBooking(
     bookingId: string
   ): Promise<Types.RequestCancelBookingResult> {
-    const url = routes.assignDriver(bookingId);
+    const url = routes.cancel(bookingId);
     const result: ApiResponse<Types.RequestCancelBookingResponse> =
-      await api.post(url);
+      await api.put(url);
     return returnResponse(result);
   },
 

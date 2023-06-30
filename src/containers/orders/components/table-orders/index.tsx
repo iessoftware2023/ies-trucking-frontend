@@ -8,6 +8,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Link from "next/link";
 import React, { useMemo } from "react";
 
+import { IBookingStatus, IOrderStatus } from "@/models/operator";
 import { currencyFormat } from "@/utils/number";
 import { parseAddress, phoneFormat, pluralize } from "@/utils/string";
 
@@ -74,8 +75,11 @@ const TableEmpty: React.FC<{ tabKey: ITrackingTabKey }> = ({ tabKey }) => {
 
 export interface ITableRow {
   id: string;
+  bookingId: string;
+  orderId: string;
   code: string;
-  status: string;
+  bookingStatus: IBookingStatus;
+  orderStatus: IOrderStatus;
   driver: IDriver;
   drivers: IDriver[];
   pickUpLocation: string;
@@ -95,10 +99,13 @@ export interface ITableRow {
 
 type IProps = {
   tabKey?: ITrackingTabKey;
+
   data: ITableRow[];
   isLoading?: boolean;
+
   onAssignDriver: (bookingId: string, driverId: string) => Promise<boolean>;
-  onCancelBooking?: (bookingId: string) => Promise<boolean>;
+  onCancelBooking: (bookingId: string) => Promise<boolean>;
+  onCancelOrder: (orderId: string) => Promise<boolean>;
 };
 
 export const TableOrders: React.FC<IProps> = ({
@@ -107,6 +114,7 @@ export const TableOrders: React.FC<IProps> = ({
   isLoading,
   onAssignDriver,
   onCancelBooking,
+  onCancelOrder,
 }) => {
   const columns = useMemo<ColumnsType<ITableRow>>(() => {
     return [
@@ -121,18 +129,24 @@ export const TableOrders: React.FC<IProps> = ({
           <div className="flex flex-col">
             <span>{text}</span>
             <span className="text-blue-400">
-              {dayjs(record.pickUpTime).fromNow(true)} left
+              {dayjs(record.pickUpTime).fromNow()}
             </span>
           </div>
         ),
       },
       {
         title: "Status",
-        dataIndex: "status",
-        key: "status",
+        dataIndex:
+          tabKey === "WAITING_ASSIGN" ? "bookingStatus" : "orderStatus",
+        key: tabKey === "WAITING_ASSIGN" ? "bookingStatus" : "orderStatus",
         width: 196,
         align: "center",
-        render: (text) => <OrderStatus status={text} />,
+        render: (_, record) => (
+          <OrderStatus
+            bookingStatus={record.bookingStatus}
+            orderStatus={record.orderStatus}
+          />
+        ),
       },
       {
         title: "Driver",
@@ -145,7 +159,9 @@ export const TableOrders: React.FC<IProps> = ({
             driver={driver}
             driverOptions={record.drivers}
             onAssignDriver={onAssignDriver}
-            readOnly={!checkCanAssignDriver(record.status)}
+            readOnly={
+              !checkCanAssignDriver(record.bookingStatus, record.orderStatus)
+            }
           />
         ),
       },
@@ -229,24 +245,34 @@ export const TableOrders: React.FC<IProps> = ({
         render: (_, record) => (
           <Space size="middle">
             <Link
-              href={`/order/${record.id}`}
+              href={`/order/${record.bookingId}`}
               className="text-blue-500 underline"
             >
               Detail
             </Link>
 
-            {checkCanCancelBooking(record.status) && (
+            {checkCanCancelBooking(
+              record.bookingStatus,
+              record.orderStatus
+            ) && (
               <Dropdown
                 menu={{
                   items: [
                     {
-                      key: "CANCEL",
+                      key: "CANCEL_BOOKING",
                       label: "Cancel Booking",
+                    },
+                    {
+                      key: "CANCEL_ORDER",
+                      label: "Cancel Order",
                     },
                   ],
                   onClick: (event) => {
-                    if (event.key === "CANCEL") {
-                      onCancelBooking?.(record.id);
+                    if (event.key === "CANCEL_BOOKING") {
+                      onCancelBooking?.(record?.bookingId);
+                    }
+                    if (event.key === "CANCEL_ORDER") {
+                      onCancelOrder?.(record?.orderId);
                     }
                   },
                 }}
@@ -258,7 +284,7 @@ export const TableOrders: React.FC<IProps> = ({
         ),
       },
     ];
-  }, [onAssignDriver, onCancelBooking]);
+  }, [onAssignDriver, onCancelBooking, onCancelOrder, tabKey]);
 
   return (
     <Table

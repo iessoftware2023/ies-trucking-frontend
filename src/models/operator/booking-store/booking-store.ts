@@ -12,7 +12,7 @@ export const OperatorBookingStoreModel = types
   .props({
     configs: types.optional(BookingConfigModel, {}),
     bookings: types.optional(types.map(BookingModel), {}),
-    booking: types.maybe(types.safeReference(types.late(() => BookingModel))),
+    booking: types.maybe(types.safeReference(BookingModel)),
   })
   .extend(withEnvironment)
   .views((self) => ({
@@ -47,9 +47,9 @@ export const OperatorBookingStoreModel = types
         yield self.operatorBookingApi.getBooking(bookingId);
 
       if (result.kind === "ok") {
+        self.bookings.set(result.result?.id.toString(), cast(result.result));
         // @ts-ignore
         self.booking = result.result?.id;
-        self.bookings.set(result.result?.id.toString(), cast(result.result));
       }
     }),
 

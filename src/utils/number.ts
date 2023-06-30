@@ -57,3 +57,13 @@ export const distanceFormat = (n: number, options?: INumberFormatOptions) => {
 
   return `${numberFormat(n / 1000, options)}km`;
 };
+
+export const durationFormat = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  const formattedHours = hours > 0 ? `${hours} hours` : "";
+  const formattedMinutes = minutes > 0 ? `${minutes} minutes` : "";
+
+  return `${formattedHours} ${formattedMinutes}`;
+};

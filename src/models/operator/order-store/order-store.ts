@@ -11,7 +11,7 @@ export const OperatorOrderStoreModel = types
   .model("OperatorOrderStoreModel")
   .props({
     orders: types.optional(types.map(OrderModel), {}),
-    order: types.maybe(types.safeReference(types.late(() => OrderModel))),
+    order: types.maybe(types.safeReference(OrderModel)),
   })
   .extend(withEnvironment)
   .views((self) => ({
@@ -39,10 +39,17 @@ export const OperatorOrderStoreModel = types
         yield self.operatorOrderApi.getOrder(orderId);
 
       if (result.kind === "ok") {
+        self.orders.set(result.result.id, cast(result.result));
         // @ts-ignore
         self.order = result.result.id;
-        self.orders.set(result.result.id, cast(result.result));
       }
+
+      return result;
+    }),
+
+    cancelOrder: flow(function* (orderId: string) {
+      const result: OperatorOrderTypes.RequestCancelOrderResult =
+        yield self.operatorOrderApi.cancelOrder(orderId);
       return result;
     }),
   }));

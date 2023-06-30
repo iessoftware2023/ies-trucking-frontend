@@ -1,9 +1,22 @@
-export const ORDER_STATUS_OBJ = {
+export const BOOKING_STATUS_OBJ = {
   pending: {
     bg: "#E6F6F4",
     color: "#008774",
     text: "Assigning Driver",
   },
+  confirmed: {
+    bg: "#E6F6F4",
+    color: "#008774",
+    text: "Confirmed",
+  },
+  expired: {
+    bg: "#fecaca",
+    color: "#ef4444",
+    text: "Expired",
+  },
+};
+
+export const ORDER_STATUS_OBJ = {
   order_placed: {
     bg: "#E6F6F4",
     color: "#008774",

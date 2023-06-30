@@ -14,7 +14,7 @@ const routes = {
   tracking: (orderId: string) => `${prefix}/${orderId}/tracking`,
   item: (orderId: string) => `${prefix}/${orderId}`,
   list: () => `${prefix}`,
-  sumary: () => `/customer/sumary`,
+  cancel: (orderId: string) => `${prefix}/${orderId}/cancel`,
 };
 
 export const OperatorOrderApi = {
@@ -35,6 +35,14 @@ export const OperatorOrderApi = {
   ): Promise<Types.RequestGetOrderResult> {
     const url = routes.tracking(orderId);
     const result: ApiResponse<IOrder> = await api.get(url);
+    return returnResponse(result);
+  },
+
+  async cancelOrder(orderId: string): Promise<Types.RequestCancelOrderResult> {
+    const url = routes.cancel(orderId);
+    const result: ApiResponse<Types.RequestCancelOrderResponse> = await api.put(
+      url
+    );
     return returnResponse(result);
   },
 };

@@ -2,7 +2,9 @@ import { Checkbox } from "antd";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
 import React from "react";
 
-import { IOrderStatus, OrderStatus } from "../order-status";
+import { IOrderStatus } from "@/models/operator";
+
+import { OrderStatus } from "../order-status";
 
 export const SelectStatus: React.FC<{
   options: string[];
@@ -18,7 +20,10 @@ export const SelectStatus: React.FC<{
       {options.map((option) => {
         return (
           <Checkbox key={option} value={option}>
-            <OrderStatus status={option as IOrderStatus} />
+            <OrderStatus
+              bookingStatus="confirmed"
+              orderStatus={option as IOrderStatus}
+            />
           </Checkbox>
         );
       })}

@@ -36,6 +36,14 @@ module.exports = {
           800: '#1d2230',
           900: '#070b16',
         }
+      },
+      height: {
+        content: 'calc(100vh - 72px)',
+      },
+      zIndex: {
+        1: 1,
+        2: 2,
+        3: 3,
       }
     },
   },

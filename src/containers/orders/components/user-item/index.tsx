@@ -33,7 +33,7 @@ export const UserItem: React.FC<IProps> = ({
       onClick={handleClick}
       aria-hidden="true"
     >
-      <UserAvatar size="small" name={name} />
+      <UserAvatar size="default" name={name} />
 
       <div className="flex-1">
         <div className="font-semibold">{name}</div>

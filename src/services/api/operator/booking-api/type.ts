@@ -125,5 +125,5 @@ export type RequestAssignDriverResult =
   | GeneralApiProblem
   | { kind: "ok"; result: RequestAssignDriverResponse };
 
-export type RequestCancelBookingResponse = null;
+export type RequestCancelBookingResponse = boolean;
 export type RequestCancelBookingResult = Response<RequestCancelBookingResponse>;

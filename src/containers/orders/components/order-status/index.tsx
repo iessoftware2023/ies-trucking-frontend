@@ -1,20 +1,33 @@
 import { Tag } from "antd";
 import React from "react";
 
-import { ORDER_STATUS_OBJ } from "./constants";
+import { IBookingStatus, IOrderStatus } from "@/models/operator";
 
-export type IOrderStatus = keyof typeof ORDER_STATUS_OBJ;
+import { BOOKING_STATUS_OBJ, ORDER_STATUS_OBJ } from "./constants";
 
 type IProps = {
-  status: IOrderStatus;
+  bookingStatus: IBookingStatus;
+  orderStatus: IOrderStatus;
 };
 
-export const OrderStatus: React.FC<IProps> = ({ status }) => {
-  const obj = ORDER_STATUS_OBJ[status];
+export const OrderStatus: React.FC<IProps> = ({
+  bookingStatus,
+  orderStatus,
+}) => {
+  let obj: { text: string; color: string; bg: string };
+
+  if (bookingStatus !== "confirmed") {
+    obj = BOOKING_STATUS_OBJ[bookingStatus];
+  } else {
+    obj = ORDER_STATUS_OBJ[orderStatus];
+  }
 
   return (
-    <Tag bordered={false} style={{ color: obj.color, backgroundColor: obj.bg }}>
-      {obj.text}
+    <Tag
+      bordered={false}
+      style={{ color: obj?.color, backgroundColor: obj?.bg }}
+    >
+      {obj?.text}
     </Tag>
   );
 };

@@ -1,7 +1,7 @@
 import "../../public/fonts/FontAwesomePro/css/fontawesome.min.css";
 import "../../public/fonts/FontAwesomePro/css/regular.min.css";
+import "../../public/fonts/FontAwesomePro/css/solid.min.css";
 import "animate.css";
-import "react-toastify/dist/ReactToastify.css";
 import "antd/dist/reset.css";
 import "@/styles/globals.css";
 
@@ -11,7 +11,6 @@ import App from "next/app";
 import { Inter } from "next/font/google";
 import NextNprogress from "nextjs-progressbar";
 import { useMemo } from "react";
-import { ToastContainer } from "react-toastify";
 
 import { ThemeProvider } from "@/components/theme";
 import { initializeStore, RootStoreProvider } from "@/models/root-store";
@@ -45,13 +44,6 @@ function IESWebApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </div>
       </ThemeProvider>
-
-      <ToastContainer
-        theme="colored"
-        position="bottom-center"
-        autoClose={1250}
-        hideProgressBar
-      />
     </RootStoreProvider>
   );
 }
