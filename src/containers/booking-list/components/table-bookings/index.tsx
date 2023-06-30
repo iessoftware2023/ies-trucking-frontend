@@ -5,12 +5,13 @@ import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
+import _ from "lodash";
 import Link from "next/link";
 import React, { useMemo } from "react";
 
 import { IBookingStatus, IOrderStatus } from "@/models/operator";
 import { currencyFormat } from "@/utils/number";
-import { parseAddress, phoneFormat, pluralize } from "@/utils/string";
+import { phoneFormat, pluralize } from "@/utils/string";
 
 import { IDriver, ITrackingTabKey } from "../../types";
 import { checkCanAssignDriver, checkCanCancelBooking } from "../../utils";
@@ -21,12 +22,13 @@ dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
 
 const RenderAddress: React.FC<{ address: string }> = ({ address }) => {
-  const parsed = parseAddress(address);
+  // const parsed = parseAddress(address);
 
   return (
     <div className="flex flex-col">
-      <span className="font-semibold">{parsed.firstLine}</span>
-      <span>{parsed.secondLine}</span>
+      {address}
+      {/* <span className="font-semibold">{parsed.firstLine}</span>
+      <span>{parsed.secondLine}</span> */}
     </div>
   );
 };
@@ -108,7 +110,7 @@ type IProps = {
   onCancelOrder: (orderId: string) => Promise<boolean>;
 };
 
-export const TableOrders: React.FC<IProps> = ({
+export const TableBookings: React.FC<IProps> = ({
   tabKey,
   data = [],
   isLoading,
@@ -122,14 +124,14 @@ export const TableOrders: React.FC<IProps> = ({
         title: "ID",
         dataIndex: "code",
         key: "code",
-        width: 128,
+        width: 136,
         align: "center",
         fixed: "left",
         render: (text, record) => (
           <div className="flex flex-col">
-            <span>{text}</span>
+            <span className="font-semibold">#{text}</span>
             <span className="text-blue-400">
-              {dayjs(record.pickUpTime).fromNow()}
+              {_.capitalize(dayjs(record.pickUpTime).fromNow())}
             </span>
           </div>
         ),
@@ -245,7 +247,7 @@ export const TableOrders: React.FC<IProps> = ({
         render: (_, record) => (
           <Space size="middle">
             <Link
-              href={`/order/${record.bookingId}`}
+              href={`/booking/${record.bookingId}`}
               className="text-blue-500 underline"
             >
               Detail
@@ -258,14 +260,15 @@ export const TableOrders: React.FC<IProps> = ({
               <Dropdown
                 menu={{
                   items: [
-                    {
-                      key: "CANCEL_BOOKING",
-                      label: "Cancel Booking",
-                    },
-                    {
-                      key: "CANCEL_ORDER",
-                      label: "Cancel Order",
-                    },
+                    tabKey === "WAITING_ASSIGN"
+                      ? {
+                          key: "CANCEL_BOOKING",
+                          label: "Cancel Booking",
+                        }
+                      : {
+                          key: "CANCEL_ORDER",
+                          label: "Cancel Order",
+                        },
                   ],
                   onClick: (event) => {
                     if (event.key === "CANCEL_BOOKING") {

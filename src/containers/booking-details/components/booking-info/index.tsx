@@ -1,7 +1,7 @@
 import { Tabs } from "antd";
 import React from "react";
 
-import { OrderStatus } from "@/containers/orders/components/order-status";
+import { OrderStatus } from "@/containers/booking-list/components/order-status";
 import { IBooking, IOrder } from "@/models/operator";
 import { currencyFormat, distanceFormat, durationFormat } from "@/utils/number";
 
@@ -15,7 +15,7 @@ type IProps = {
   onAssignDriver: (bookingId: string, driverId: string) => Promise<boolean>;
 };
 
-export const OrderInfo: React.FC<IProps> = ({
+export const BookingInfo: React.FC<IProps> = ({
   booking,
   order,
   onAssignDriver,
@@ -92,6 +92,7 @@ export const OrderInfo: React.FC<IProps> = ({
                 <TabTracking
                   bookingStatus={booking?.status}
                   orderStatus={order?.status}
+                  metadata={order?.metadata}
                 />
               ),
             },

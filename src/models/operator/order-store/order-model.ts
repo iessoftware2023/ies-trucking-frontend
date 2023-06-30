@@ -138,6 +138,14 @@ export const OrderModel = types.model("OrderModel").props({
       address: types.maybeNull(types.string),
     })
   ),
+  metadata: types.maybeNull(
+    types.array(
+      types.model("MetadataModel").props({
+        status: types.enumeration("OrderStatus", [...ORDER_STATUS_AS_CONST]),
+        time: types.maybeNull(types.string),
+      })
+    )
+  ),
 });
 
 export type IOrder = Instance<typeof OrderModel>;

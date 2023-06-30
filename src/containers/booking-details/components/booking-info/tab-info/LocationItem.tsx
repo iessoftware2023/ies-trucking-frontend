@@ -37,7 +37,7 @@ export const LocationItem: React.FC<{
       <div className="flex-1 space-y-1">
         <div>{address}</div>
 
-        <div className="flex items-center space-x-1 text-gray-500">
+        <div className="flex items-center space-x-1 text-gray-400">
           <i className="far fa-clock" />
           <span>{formatDate(time)}</span>
         </div>

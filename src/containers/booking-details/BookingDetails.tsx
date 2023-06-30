@@ -1,18 +1,19 @@
 import { notification } from "antd";
 import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 
 import { useStores } from "@/models";
 
-import { OrderInfo } from "./components";
+import { BookingInfo, MapsWaitingAssign } from "./components";
 import { useFetchBookingInterval } from "./hooks/fetch-booking-interval";
 import { useFetchOrderInterval } from "./hooks/fetch-order-interval";
 
 const TrackingMaps = dynamic(
   () =>
-    import("@/containers/order-details/components").then((m) => m.TrackingMaps),
+    import("@/containers/booking-details/components").then(
+      (m) => m.TrackingMaps
+    ),
   {
     ssr: false,
   }
@@ -25,7 +26,7 @@ type IProps = {
   bookingId: string;
 };
 
-export const OrderDetailsContainer: React.FC<IProps> = observer(
+export const BookingDetailsContainer: React.FC<IProps> = observer(
   ({ bookingId }) => {
     const [noti, notiContextHolder] = notification.useNotification();
 
@@ -34,22 +35,22 @@ export const OrderDetailsContainer: React.FC<IProps> = observer(
     const { booking } = operatorStore.bookingStore;
     const { order } = operatorStore.orderStore;
 
-    const router = useRouter();
+    // const router = useRouter();
 
     useFetchBookingInterval(bookingId);
     useFetchOrderInterval(booking?.order?.id);
 
-    useEffect(() => {
-      if (
-        !bookingId ||
-        ["cancelled", "expired"].includes(booking?.status) ||
-        ["cancelled", "completed"].includes(order?.status)
-      ) {
-        noti.error({ message: "Booking has been cancelled or expired" });
-        router.push("/");
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [bookingId, booking?.status, order?.status]);
+    // useEffect(() => {
+    //   if (
+    //     !bookingId ||
+    //     ["cancelled", "expired"].includes(booking?.status) ||
+    //     ["cancelled", "completed"].includes(order?.status)
+    //   ) {
+    //     noti.error({ message: "Booking has been cancelled or expired" });
+    //     router.push("/");
+    //   }
+    //   // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [bookingId, booking?.status, order?.status]);
 
     const origin = useMemo(() => {
       if (["order_pickup", "on_the_way_to_dropoff"].includes(order?.status)) {
@@ -63,11 +64,7 @@ export const OrderDetailsContainer: React.FC<IProps> = observer(
     }, [order?.status, order?.tracking, booking?.pickup]);
 
     const destination = useMemo(() => {
-      if (
-        ["order_placed", "schedule_delivery", "on_the_way_to_pickup"].includes(
-          order?.status
-        )
-      ) {
+      if (["order_placed", "on_the_way_to_pickup"].includes(order?.status)) {
         return extractLatLng(booking?.pickup);
       }
 
@@ -110,21 +107,25 @@ export const OrderDetailsContainer: React.FC<IProps> = observer(
     };
 
     return (
-      <div className="grid h-content grid-cols-2">
+      <div className="grid h-content grid-cols-2 divide-x">
         <div className="overflow-y-scroll bg-white">
-          <OrderInfo
+          <BookingInfo
             booking={booking}
             order={order}
             onAssignDriver={handleAssignDriver}
           />
         </div>
 
-        <div>
-          <TrackingMaps
-            origin={origin}
-            destination={destination}
-            driverLocation={driverLocation}
-          />
+        <div className="overflow-hidden">
+          {booking?.status !== "confirmed" ? (
+            <MapsWaitingAssign />
+          ) : (
+            <TrackingMaps
+              origin={origin}
+              destination={destination}
+              driverLocation={driverLocation}
+            />
+          )}
         </div>
 
         {notiContextHolder}

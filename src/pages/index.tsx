@@ -2,14 +2,14 @@ import dynamic from "next/dynamic";
 
 import { LayoutBase } from "@/components/layout";
 
-const OrdersContainer = dynamic(() =>
-  import("@/containers/orders").then((m) => m.OrdersContainer)
+const BookingListContainer = dynamic(() =>
+  import("@/containers/booking-list").then((m) => m.BookingListContainer)
 );
 
 export default function HomePage() {
   return (
     <LayoutBase title="Home" menuActiveKey="DASHBOARD">
-      <OrdersContainer />
+      <BookingListContainer />
     </LayoutBase>
   );
 }

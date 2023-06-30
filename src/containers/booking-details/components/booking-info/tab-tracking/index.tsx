@@ -1,5 +1,7 @@
 import React, { useMemo } from "react";
 
+import { ORDER_STATUS_OBJ } from "@/containers/booking-list/components/order-status/constants";
+import { IOrderStatus } from "@/models/operator";
 import { formatDate } from "@/utils/string";
 
 import { Steps } from "../../steps";
@@ -15,11 +17,13 @@ const STEP_KEYS = [
 type IProps = {
   bookingStatus: string;
   orderStatus: string;
+  metadata: { status: IOrderStatus; time: string }[];
 };
 
 export const TabTracking: React.FC<IProps> = ({
   bookingStatus,
   orderStatus,
+  metadata = [],
 }) => {
   const status = useMemo(() => {
     if (bookingStatus === "pending") {
@@ -30,28 +34,13 @@ export const TabTracking: React.FC<IProps> = ({
     }
   }, [bookingStatus, orderStatus]);
 
-  const STEPS = [
-    {
-      title: "Order placed",
-      content: formatDate(new Date()),
-    },
-    {
-      title: "On the way to pick-up",
-      content: formatDate(new Date()),
-    },
-    {
-      title: "Pick-up order",
-      content: "",
-    },
-    {
-      title: "On the way to delivery",
-      content: "",
-    },
-    {
-      title: "Delivery completed",
-      content: "",
-    },
-  ];
+  const STEPS = STEP_KEYS.map((key) => {
+    const metadataItem = metadata.find((item) => item.status === key);
+    return {
+      title: ORDER_STATUS_OBJ[key]?.text,
+      content: metadataItem?.time ? formatDate(metadataItem.time) : "",
+    };
+  });
 
   return (
     <div className="p-4">

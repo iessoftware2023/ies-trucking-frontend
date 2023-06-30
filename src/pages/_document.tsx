@@ -14,6 +14,7 @@ export default function Document() {
         />
         <script dangerouslySetInnerHTML={{ __html: scriptEnv }} />
       </Head>
+
       <body>
         <Main />
         <NextScript />

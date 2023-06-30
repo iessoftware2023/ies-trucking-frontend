@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { REFRESH_DATA_INTERVAL } from "@/containers/orders/constants";
+import { REFRESH_DATA_INTERVAL } from "@/containers/booking-list/constants";
 import { useStores } from "@/models";
 
 export const useFetchOrderInterval = (orderId: string) => {
@@ -18,16 +18,13 @@ export const useFetchOrderInterval = (orderId: string) => {
       }
     };
 
-    // Fetch data immediately upon focus
     fetchData();
 
-    // Then fetch data every 30 seconds
     let intervalId: NodeJS.Timer;
     if (orderId && !["completed", "cancelled"].includes(order?.status)) {
       intervalId = setInterval(fetchData, REFRESH_DATA_INTERVAL);
     }
 
-    // Clear the interval upon losing focus
     return () => {
       if (intervalId) {
         clearInterval(intervalId);

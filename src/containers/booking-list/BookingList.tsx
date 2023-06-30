@@ -7,21 +7,21 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useInterval } from "@/hooks";
 import { useStores } from "@/models";
 
-import { TableOrders } from "./components";
+import { TableBookings } from "./components";
 import { DrawerFilter, IFormFilterValues } from "./components/drawer-filter";
 import {
   convertBookingsToTable,
   convertOrdersToTable,
   getBookingSearchField,
   getOrderSearchField,
-} from "./components/table-orders/utils";
+} from "./components/table-bookings/utils";
 import { REFRESH_DATA_INTERVAL, TRACKING_TABS } from "./constants";
 import { ITrackingTabKey } from "./types";
 import { handleTrackingFilter } from "./utils";
 
 dayjs.extend(isBetween);
 
-const OrdersContainerCom: React.FC = () => {
+const BookingListContainerCom: React.FC = () => {
   const [noti, notiContextHolder] = notification.useNotification();
 
   const { operatorStore } = useStores();
@@ -197,7 +197,7 @@ const OrdersContainerCom: React.FC = () => {
       </div>
 
       <div className="p-4">
-        <TableOrders
+        <TableBookings
           data={tableData}
           isLoading={isLoading}
           //
@@ -220,4 +220,4 @@ const OrdersContainerCom: React.FC = () => {
   );
 };
 
-export const OrdersContainer = observer(OrdersContainerCom);
+export const BookingListContainer = observer(BookingListContainerCom);

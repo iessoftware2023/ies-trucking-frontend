@@ -5,27 +5,27 @@ import Router from "next/router";
 import { LayoutBase } from "@/components/layout";
 import { NextPageContextWithRootStore } from "@/types/next";
 
-const OrderDetailsContainer = dynamic(() =>
-  import("@/containers/order-details").then((m) => m.OrderDetailsContainer)
+const BookingDetailsContainer = dynamic(() =>
+  import("@/containers/booking-details").then((m) => m.BookingDetailsContainer)
 );
 
 type IProps = {
   bookingId: string;
 };
 
-const OrderDetailsPage: NextPage<IProps> = ({ bookingId }) => {
+const BookingDetailsPage: NextPage<IProps> = ({ bookingId }) => {
   return (
     <LayoutBase
-      title="Order Details"
-      headerTitle="Order Details"
+      title="Booking Details"
+      headerTitle="Booking Details"
       menuActiveKey="DASHBOARD"
     >
-      <OrderDetailsContainer bookingId={bookingId} />
+      <BookingDetailsContainer bookingId={bookingId} />
     </LayoutBase>
   );
 };
 
-OrderDetailsPage.getInitialProps = async (
+BookingDetailsPage.getInitialProps = async (
   context: NextPageContextWithRootStore
 ) => {
   const bookingId = context.query?.bookingId as string;
@@ -39,11 +39,9 @@ OrderDetailsPage.getInitialProps = async (
     }
   }
 
-  context.store.operatorStore.bookingStore.getBooking(bookingId);
-
   return {
     bookingId,
   };
 };
 
-export default OrderDetailsPage;
+export default BookingDetailsPage;

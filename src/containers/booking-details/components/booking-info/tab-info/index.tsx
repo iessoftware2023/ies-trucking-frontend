@@ -1,8 +1,8 @@
 import { Tag } from "antd";
 import React from "react";
 
-import { AssignDriver } from "@/containers/orders/components/assign-driver";
-import { checkCanAssignDriver } from "@/containers/orders/utils";
+import { AssignDriver } from "@/containers/booking-list/components/assign-driver";
+import { checkCanAssignDriver } from "@/containers/booking-list/utils";
 import { IBooking, IOrder } from "@/models/operator";
 import { formatDate, phoneFormat } from "@/utils/string";
 
@@ -103,16 +103,18 @@ export const TabInfo: React.FC<IProps> = ({
           <div>
             <div className="up mb-1 uppercase text-gray-400">Item detail</div>
             <div>
-              <Tag>{booking?.cargoType?.name}</Tag>
-              <Tag>
-                {[
-                  booking?.cargoSize?.width,
-                  booking?.cargoSize?.height,
-                  booking?.cargoSize?.length,
-                ]
-                  .map((e) => `${e}m`)
-                  .join(" x ")}
-              </Tag>
+              {booking?.cargoType && <Tag>{booking?.cargoType?.name}</Tag>}
+              {booking?.cargoSize && (
+                <Tag>
+                  {[
+                    booking?.cargoSize?.width,
+                    booking?.cargoSize?.height,
+                    booking?.cargoSize?.length,
+                  ]
+                    .map((e) => `${e}m`)
+                    .join(" x ")}
+                </Tag>
+              )}
             </div>
           </div>
 
