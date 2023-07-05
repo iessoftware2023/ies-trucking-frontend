@@ -121,8 +121,8 @@ type IProps = {
   isLoading?: boolean;
 
   onAssignDriver: (bookingId: string, driverId: string) => Promise<boolean>;
-  onCancelBooking: (bookingId: string) => Promise<boolean>;
-  onCancelOrder: (orderId: string) => Promise<boolean>;
+  onCancelBooking: (bookingId: string, code: string) => Promise<boolean>;
+  onCancelOrder: (orderId: string, code: string) => Promise<boolean>;
 };
 
 export const TableBookings: React.FC<IProps> = ({
@@ -290,10 +290,10 @@ export const TableBookings: React.FC<IProps> = ({
                   ],
                   onClick: (event) => {
                     if (event.key === "CANCEL_BOOKING") {
-                      onCancelBooking?.(record?.bookingId);
+                      onCancelBooking?.(record?.bookingId, record?.code);
                     }
                     if (event.key === "CANCEL_ORDER") {
-                      onCancelOrder?.(record?.orderId);
+                      onCancelOrder?.(record?.orderId, record?.code);
                     }
                   },
                 }}

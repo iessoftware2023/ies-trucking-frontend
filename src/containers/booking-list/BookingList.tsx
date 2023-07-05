@@ -4,7 +4,7 @@ import isBetween from "dayjs/plugin/isBetween";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useMemo, useState } from "react";
 
-import { useInterval } from "@/hooks";
+import { useConfirmDialog, useInterval } from "@/hooks";
 import { useStores } from "@/models";
 
 import { TableBookings } from "./components";
@@ -23,6 +23,7 @@ dayjs.extend(isBetween);
 
 const BookingListContainerCom: React.FC = () => {
   const [noti, notiContextHolder] = notification.useNotification();
+  const { confirmDialog, modalContextHolder } = useConfirmDialog();
 
   const { operatorStore } = useStores();
 
@@ -80,7 +81,20 @@ const BookingListContainerCom: React.FC = () => {
     return true;
   };
 
-  const handleCancelBooking = async (bookingId: string) => {
+  const handleCancelBooking = async (bookingId: string, code: string) => {
+    const isConfirmed = await confirmDialog({
+      content: (
+        <span>
+          Are you sure you want to cancel booking{" "}
+          <span className="font-semibold">#{code}</span>
+        </span>
+      ),
+    });
+
+    if (!isConfirmed) {
+      return;
+    }
+
     const res = await operatorStore.bookingStore.cancelBooking(bookingId);
 
     if (res.kind === "conflict") {
@@ -100,7 +114,20 @@ const BookingListContainerCom: React.FC = () => {
     return true;
   };
 
-  const handleCancelOrder = async (orderId: string) => {
+  const handleCancelOrder = async (orderId: string, code: string) => {
+    const isConfirmed = await confirmDialog({
+      content: (
+        <span>
+          Are you sure you want to cancel order{" "}
+          <span className="font-semibold">#{code}</span>
+        </span>
+      ),
+    });
+
+    if (!isConfirmed) {
+      return;
+    }
+
     const res = await operatorStore.orderStore.cancelOrder(orderId);
 
     if (res.kind === "conflict") {
@@ -217,6 +244,7 @@ const BookingListContainerCom: React.FC = () => {
       />
 
       {notiContextHolder}
+      {modalContextHolder}
     </div>
   );
 };
