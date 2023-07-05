@@ -25,17 +25,17 @@ export const ORDER_STATUS_OBJ = {
   on_the_way_to_pickup: {
     bg: "#E1F4FF",
     color: "#007DC3",
-    text: "On the way to pickup",
+    text: "On the way to pick-up",
   },
   order_pickup: {
     bg: "#E1F4FF",
     color: "#007DC3",
-    text: "Order pickup",
+    text: "Pick-up order",
   },
   on_the_way_to_dropoff: {
     bg: "#E1F4FF",
     color: "#007DC3",
-    text: "On the way to dropoff",
+    text: "On the way to delivery",
   },
   cancelled: {
     bg: "#E1E1E2",
