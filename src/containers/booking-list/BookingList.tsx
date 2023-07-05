@@ -198,6 +198,7 @@ const BookingListContainerCom: React.FC = () => {
 
       <div className="p-4">
         <TableBookings
+          tabKey={tabKey}
           data={tableData}
           isLoading={isLoading}
           //

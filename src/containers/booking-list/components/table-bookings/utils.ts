@@ -7,12 +7,16 @@ import { ITableRow } from ".";
 export const convertBookingsToTable = (bookings: IBooking[]): ITableRow[] => {
   return bookings.map((booking) => {
     return {
+      rowType: "BOOKING",
+      //
       id: booking.id,
       bookingId: booking.id,
       orderId: null,
       code: booking.code,
-      bookingStatus: booking.status,
-      orderStatus: null,
+      status: {
+        bookingStatus: booking.status,
+        orderStatus: null,
+      },
       driver: null,
       drivers: booking.drivers ?? [],
       pickUpLocation: booking.pickup?.address,
@@ -35,12 +39,16 @@ export const convertBookingsToTable = (bookings: IBooking[]): ITableRow[] => {
 export const convertOrdersToTable = (orders: IOrder[]): ITableRow[] => {
   return orders.map((order) => {
     return {
+      rowType: "ORDER",
+      //
       id: order.id,
       bookingId: order.booking?.id,
       orderId: order.id,
       code: order.booking?.code,
-      bookingStatus: order.booking?.status,
-      orderStatus: order.status,
+      status: {
+        bookingStatus: order.booking?.status,
+        orderStatus: order.status,
+      },
       driver: {
         id: order.driver?.id,
         name: order.driver?.name,
