@@ -94,7 +94,7 @@ export const BookingModel = types
     ),
     cargoWeight: types.maybeNull(
       types.model("CargoWeightModel").props({
-        name: types.maybeNull(types.string),
+        description: types.maybeNull(types.string),
       })
     ),
     cargoSize: types.maybeNull(

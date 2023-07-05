@@ -146,6 +146,7 @@ export const OrderModel = types.model("OrderModel").props({
       })
     )
   ),
+  createdAt: types.maybeNull(types.string),
 });
 
 export type IOrder = Instance<typeof OrderModel>;

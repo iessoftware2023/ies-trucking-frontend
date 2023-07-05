@@ -23,7 +23,7 @@ body {
 }
 
 .ant-tag {
-  @apply font-medium rounded-full px-2;
+  @apply font-medium rounded-full px-2 mr-0;
 }
 
 .ant-segmented .ant-segmented-item-selected {

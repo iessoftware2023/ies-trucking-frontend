@@ -14,15 +14,19 @@ const STEP_KEYS = [
   "completed",
 ];
 
+type IMetadata = { status: IOrderStatus; time: string };
+
 type IProps = {
   bookingStatus: string;
   orderStatus: string;
-  metadata: { status: IOrderStatus; time: string }[];
+  orderCreatedAt: string;
+  metadata: IMetadata[];
 };
 
 export const TabTracking: React.FC<IProps> = ({
   bookingStatus,
   orderStatus,
+  orderCreatedAt,
   metadata = [],
 }) => {
   const status = useMemo(() => {
@@ -35,7 +39,15 @@ export const TabTracking: React.FC<IProps> = ({
   }, [bookingStatus, orderStatus]);
 
   const STEPS = STEP_KEYS.map((key) => {
-    const metadataItem = metadata.find((item) => item.status === key);
+    let metadataItem = metadata.find((item) => item.status === key);
+
+    if (key === "order_placed") {
+      metadataItem = {
+        status: "order_placed",
+        time: orderCreatedAt,
+      };
+    }
+
     return {
       title: ORDER_STATUS_OBJ[key]?.text,
       content: metadataItem?.time ? formatDate(metadataItem.time) : "",

@@ -21,6 +21,12 @@ export const TabInfo: React.FC<IProps> = ({
 
   onAssignDriver,
 }) => {
+  const cargoSizes = [
+    booking?.cargoSize?.width,
+    booking?.cargoSize?.height,
+    booking?.cargoSize?.length,
+  ].filter((e) => e);
+
   return (
     <div className="space-y-4 p-4">
       <div className="space-x-1">
@@ -101,19 +107,16 @@ export const TabInfo: React.FC<IProps> = ({
           </div>
 
           <div>
-            <div className="up mb-1 uppercase text-gray-400">Item detail</div>
-            <div>
+            <div className="up mb-1 uppercase text-gray-400">DELIVERY ITEM</div>
+            <div className="flex flex-wrap gap-1">
               {booking?.cargoType && <Tag>{booking?.cargoType?.name}</Tag>}
-              {booking?.cargoSize && (
-                <Tag>
-                  {[
-                    booking?.cargoSize?.width,
-                    booking?.cargoSize?.height,
-                    booking?.cargoSize?.length,
-                  ]
-                    .map((e) => `${e}m`)
-                    .join(" x ")}
-                </Tag>
+
+              {booking?.cargoWeight && (
+                <Tag>{booking?.cargoWeight?.description}</Tag>
+              )}
+
+              {cargoSizes.length > 0 && (
+                <Tag>{cargoSizes.map((e) => `${e}m`).join(" x ")}</Tag>
               )}
             </div>
           </div>
@@ -125,8 +128,8 @@ export const TabInfo: React.FC<IProps> = ({
 
           <div>
             <div className="up mb-1 uppercase text-gray-400">CUSTOMER INFO</div>
-            <div className="font-semibold">Tri Nguyen</div>
-            <div>{phoneFormat("+84777888148")}</div>
+            <div className="font-semibold">{booking?.customerFullName}</div>
+            <div>{phoneFormat(booking?.customer?.phoneNumber)}</div>
           </div>
         </div>
 
@@ -137,11 +140,6 @@ export const TabInfo: React.FC<IProps> = ({
             </div>
             <div className="font-semibold">{booking?.dropoff?.fullName}</div>
             <div>{phoneFormat(booking?.dropoff?.phoneNumber)}</div>
-          </div>
-
-          <div>
-            <div className="up mb-1 uppercase text-gray-400">Address</div>
-            <div>7261/ 2 Ferndale WA 6148, Australia</div>
           </div>
         </div>
       </div>

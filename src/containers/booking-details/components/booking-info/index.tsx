@@ -90,6 +90,7 @@ export const BookingInfo: React.FC<IProps> = ({
               label: "Tracking Detail",
               children: (
                 <TabTracking
+                  orderCreatedAt={order?.createdAt}
                   bookingStatus={booking?.status}
                   orderStatus={order?.status}
                   metadata={order?.metadata}

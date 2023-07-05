@@ -1,3 +1,5 @@
+import { pluralize } from "./string";
+
 type INumberFormatOptions = {
   locale?: string;
   fractionDigits?: number;
@@ -62,8 +64,15 @@ export const durationFormat = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
 
-  const formattedHours = hours > 0 ? `${hours} hours` : "";
-  const formattedMinutes = minutes > 0 ? `${minutes} minutes` : "";
+  const list = [];
 
-  return `${formattedHours} ${formattedMinutes}`;
+  if (hours > 0) {
+    list.push(pluralize(hours, "hour"));
+  }
+
+  if (minutes > 0) {
+    list.push(pluralize(minutes, "minute"));
+  }
+
+  return list.join(" ");
 };

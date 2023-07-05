@@ -1,5 +1,6 @@
 import { UserAddOutlined } from "@ant-design/icons";
 import { Dropdown, Spin } from "antd";
+import clsx from "clsx";
 import React, { useState } from "react";
 
 import { phoneFormat } from "@/utils/string";
@@ -44,20 +45,25 @@ const DriverItem: React.FC<{
 
 const DriverOptions: React.FC<{
   options: IDriver[];
+  value?: string;
   onChange: (driverId: string) => void;
-}> = ({ options = [], onChange }) => {
+}> = ({ options = [], value, onChange }) => {
   return (
     <div className="rounded-md border bg-white py-1 shadow-md">
       {options.map((option) => {
+        const isDisabled = option.id === value;
+
         return (
           <UserItem
             key={option.id}
             id={option.id}
             name={option.name}
             description={phoneFormat(option.phoneNumber)}
-            onClick={onChange}
+            onClick={!isDisabled ? onChange : undefined}
             //
-            className="cursor-pointer px-3 py-1 hover:bg-gray-100"
+            className={clsx("cursor-pointer px-3 py-1 hover:bg-gray-100", {
+              "opacity-50": isDisabled,
+            })}
           />
         );
       })}
@@ -108,6 +114,7 @@ export const AssignDriver: React.FC<IProps> = ({
         <div>
           <DriverOptions
             options={driverOptions}
+            value={driver?.id}
             onChange={handleDriverChange}
           />
         </div>

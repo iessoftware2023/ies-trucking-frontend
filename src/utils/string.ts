@@ -56,5 +56,5 @@ export const pluralize = (count: number, noun: string, suffix = "s") =>
   `${count} ${noun}${count !== 1 ? suffix : ""}`;
 
 export const formatDate = (date: string | Date | dayjs.Dayjs) => {
-  return dayjs(date).format("ddd DD MMM - HH:mm A");
+  return dayjs(date).format("ddd DD MMM - hh:mm A");
 };
