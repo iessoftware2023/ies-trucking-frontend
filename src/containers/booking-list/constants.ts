@@ -5,11 +5,11 @@ const ENV = envGlobal();
 
 export const TRACKING_TABS_CONST = [
   {
-    label: "Waitting Assign",
+    label: "Waiting Assign",
     value: "WAITING_ASSIGN",
   },
   {
-    label: "On Going",
+    label: "On-Going",
     value: "ON_GOING",
   },
   {

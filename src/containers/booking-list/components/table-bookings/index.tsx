@@ -168,14 +168,14 @@ export const TableBookings: React.FC<IProps> = ({
         ),
       },
       {
-        title: "Pick up location",
+        title: "Pick-up location",
         dataIndex: "pickUpLocation",
         key: "pickUpLocation",
         width: 256,
         render: (text) => <RenderAddress address={text} />,
       },
       {
-        title: "Pick up time",
+        title: "Pick-up time",
         dataIndex: "pickUpTime",
         key: "pickUpTime",
         width: 128,
