@@ -21,6 +21,18 @@ import { OrderStatus } from "../order-status";
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
 
+const RenderCountdown: React.FC<{ date: string }> = ({ date }) => {
+  const dateObj = dayjs(date);
+
+  if (dayjs().isAfter(dateObj)) {
+    return <span className="text-red-400">Overtime</span>;
+  }
+
+  const dateStr = `${dateObj.fromNow(true)} left`;
+
+  return <span className="text-blue-400">{_.capitalize(dateStr)}</span>;
+};
+
 const RenderAddress: React.FC<{ address: string }> = ({ address }) => {
   // const parsed = parseAddress(address);
 
@@ -124,15 +136,16 @@ export const TableBookings: React.FC<IProps> = ({
         title: "ID",
         dataIndex: "code",
         key: "code",
-        width: 136,
+        width: 160,
         align: "center",
         fixed: "left",
         render: (text, record) => (
           <div className="flex flex-col">
             <span className="font-semibold">#{text}</span>
-            <span className="text-blue-400">
-              {_.capitalize(dayjs(record.pickUpTime).fromNow())}
-            </span>
+
+            {tabKey === "WAITING_ASSIGN" && (
+              <RenderCountdown date={record.pickUpTime} />
+            )}
           </div>
         ),
       },
