@@ -14,6 +14,7 @@ const routes = {
   tracking: (orderId: string) => `${prefix}/${orderId}/tracking`,
   item: (orderId: string) => `${prefix}/${orderId}`,
   list: () => `${prefix}`,
+  assignDriver: (orderId: string) => `${prefix}/${orderId}/assign-driver`,
   cancel: (orderId: string) => `${prefix}/${orderId}/cancel`,
 };
 
@@ -35,6 +36,16 @@ export const OperatorOrderApi = {
   ): Promise<Types.RequestGetOrderResult> {
     const url = routes.tracking(orderId);
     const result: ApiResponse<IOrder> = await api.get(url);
+    return returnResponse(result);
+  },
+
+  async assignDriver(
+    orderId: string,
+    driverId: string
+  ): Promise<Types.RequestAssignDriverResult> {
+    const url = routes.assignDriver(orderId);
+    const result: ApiResponse<Types.RequestAssignDriverResponse> =
+      await api.put(url, { driverId });
     return returnResponse(result);
   },
 

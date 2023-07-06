@@ -58,15 +58,18 @@ const BookingListContainerCom: React.FC = () => {
     }
   };
 
-  const handleAssignDriver = async (bookingId: string, driverId: string) => {
-    const res = await operatorStore.bookingStore.assignDriver(
-      bookingId,
+  const handleAssignDriver = async (id: string, driverId: string) => {
+    const api = tabKey === 'WAITING_ASSIGN'
+      ? operatorStore.bookingStore.assignDriver
+      : operatorStore.orderStore.assignDriver
+    const res = await api(
+      id,
       driverId
     );
 
     if (res.kind === "conflict") {
       const content = res.errors?.[0]?.message || "Failed to assign driver";
-      noti.error({ message: content });
+      noti.error({message: content});
       return false;
     }
 

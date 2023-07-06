@@ -47,6 +47,12 @@ export const OperatorOrderStoreModel = types
       return result;
     }),
 
+    assignDriver: flow(function* (orderId: string, driverId: string) {
+      const result: OperatorOrderTypes.RequestAssignDriverResult =
+        yield self.operatorOrderApi.assignDriver(orderId, driverId);
+      return result;
+    }),
+
     cancelOrder: flow(function* (orderId: string) {
       const result: OperatorOrderTypes.RequestCancelOrderResult =
         yield self.operatorOrderApi.cancelOrder(orderId);
