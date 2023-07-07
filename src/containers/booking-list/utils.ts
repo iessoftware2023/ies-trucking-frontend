@@ -55,8 +55,11 @@ export const checkCanAssignDriver = (
 };
 
 export const checkCanCancelBooking = (
-  bookingStatus: IBookingStatus,
-  orderStatus: IOrderStatus
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _bookingStatus: IBookingStatus,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _orderStatus: IOrderStatus
 ) => {
-  return checkCanAssignDriver(bookingStatus, orderStatus);
+  return true;
+  // return checkCanAssignDriver(bookingStatus, orderStatus);
 };

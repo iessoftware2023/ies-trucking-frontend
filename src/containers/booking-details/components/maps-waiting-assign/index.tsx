@@ -11,8 +11,7 @@ export const MapsWaitingAssign = () => {
       <div className="mb-1 text-2xl font-semibold">Please wait a moment...</div>
 
       <div className="mb-8 w-1/2 text-center text-base text-gray-400">
-        The tracking map will be displayed prior to the commencement of the
-        shipment.
+        The tracking map will be displayed when the order change on-going status
       </div>
     </div>
   );
