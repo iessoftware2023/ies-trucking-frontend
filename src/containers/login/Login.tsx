@@ -53,11 +53,11 @@ const LoginContainerCom: React.FC = () => {
     <main className="flex">
       <div
         className="relative hidden h-screen bg-gray-200 bg-cover bg-right-bottom lg:block lg:w-1/2 xl:w-2/3"
-        style={{ backgroundImage: `url('/images/login-hero.jpg')` }}
+        style={{ backgroundImage: `url('/images/auth-hero.jpg')` }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/images/login-bg-overlay.png"
+          src="/images/auth-bg-overlay.png"
           className="absolute bottom-0 left-0 w-1/3"
           alt="Logo"
         />

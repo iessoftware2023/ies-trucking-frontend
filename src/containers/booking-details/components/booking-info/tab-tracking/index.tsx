@@ -23,6 +23,10 @@ type IProps = {
   metadata: IMetadata[];
 };
 
+const NEW_STATUS_NAMES = {
+  completed: "Delivery completed",
+};
+
 export const TabTracking: React.FC<IProps> = ({
   bookingStatus,
   orderStatus,
@@ -49,7 +53,7 @@ export const TabTracking: React.FC<IProps> = ({
     }
 
     return {
-      title: ORDER_STATUS_OBJ[key]?.text,
+      title: NEW_STATUS_NAMES[key] || ORDER_STATUS_OBJ[key]?.text,
       content: metadataItem?.time ? formatDate(metadataItem.time) : "",
     };
   });

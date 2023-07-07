@@ -54,10 +54,10 @@ export const currencyFormat = (n: number, options: ICurrencyFormatOptions) => {
 
 export const distanceFormat = (n: number, options?: INumberFormatOptions) => {
   if (n < 1000) {
-    return `${numberFormat(n, options)}m`;
+    return `${numberFormat(n, options)} m`;
   }
 
-  return `${numberFormat(n / 1000, options)}km`;
+  return `${numberFormat(n / 1000, options)} km`;
 };
 
 export const durationFormat = (seconds: number) => {

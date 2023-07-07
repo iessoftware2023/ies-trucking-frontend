@@ -76,7 +76,7 @@ export const BookingInfo: React.FC<IProps> = ({
           items={[
             {
               key: "INFO",
-              label: "Order Detail",
+              label: "Order Details",
               children: (
                 <TabInfo
                   booking={booking}
@@ -87,7 +87,7 @@ export const BookingInfo: React.FC<IProps> = ({
             },
             {
               key: "TRACKING",
-              label: "Tracking Detail",
+              label: "Tracking Details",
               children: (
                 <TabTracking
                   orderCreatedAt={order?.createdAt}

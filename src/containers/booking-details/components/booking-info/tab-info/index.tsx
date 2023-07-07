@@ -122,11 +122,6 @@ export const TabInfo: React.FC<IProps> = ({
           </div>
 
           <div>
-            <div className="up mb-1 uppercase text-gray-400">Note</div>
-            <div>{booking?.pickup?.addressNote || "..."}</div>
-          </div>
-
-          <div>
             <div className="up mb-1 uppercase text-gray-400">CUSTOMER INFO</div>
             <div className="font-semibold">{booking?.customerFullName}</div>
             <div>{phoneFormat(booking?.customer?.phoneNumber)}</div>
