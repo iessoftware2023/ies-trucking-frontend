@@ -5,6 +5,8 @@ import "animate.css";
 import "antd/dist/reset.css";
 import "@/styles/globals.css";
 
+import dayjs from "dayjs";
+import updateLocale from "dayjs/plugin/updateLocale";
 import { getSnapshot } from "mobx-state-tree";
 import type { AppInitialProps, AppProps } from "next/app";
 import App from "next/app";
@@ -17,6 +19,26 @@ import { initializeStore, RootStoreProvider } from "@/models/root-store";
 import { Api } from "@/services/api";
 import { AppContext } from "@/types/next";
 import { redirectAuth } from "@/utils/router";
+
+dayjs.extend(updateLocale);
+
+dayjs.updateLocale("en", {
+  relativeTime: {
+    future: "in %s",
+    past: "%s ago",
+    s: "a few seconds",
+    m: "1 minute",
+    mm: "%d minutes",
+    h: "1 hour",
+    hh: "%d hours",
+    d: "1 day",
+    dd: "%d days",
+    M: "1 month",
+    MM: "%d months",
+    y: "1 year",
+    yy: "%d years",
+  },
+});
 
 const inter = Inter({
   display: "swap",

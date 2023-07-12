@@ -3,14 +3,14 @@ import {
   DirectionsService,
   GoogleMap,
   Marker,
-  // Marker,
   useJsApiLoader,
 } from "@react-google-maps/api";
 import envGlobal from "env";
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useEffect, useMemo } from "react";
 
 const { GOOGLE_MAPS_API_KEY } = envGlobal();
 
+const MARKER_SIZE = 32;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = 0.0421;
 
@@ -49,12 +49,17 @@ export type ILatLng = {
 };
 
 type IProps = {
+  pickup: ILatLng;
+  dropoff: ILatLng;
   origin: ILatLng;
   destination: ILatLng;
   driverLocation: ILatLng;
 };
 
 const TrackingMapsCom: React.FC<IProps> = ({
+  pickup,
+  dropoff,
+  //
   origin,
   destination,
   driverLocation,
@@ -69,44 +74,69 @@ const TrackingMapsCom: React.FC<IProps> = ({
   const [directions, setDirections] =
     React.useState<google.maps.DirectionsResult>(null);
 
-  const fitMapBounds = useCallback((response: google.maps.DirectionsResult) => {
-    if (!response.routes.length) {
+  const fitBounds = useCallback((bounds: google.maps.LatLngBounds) => {
+    if (!bounds || !mapRef.current) {
+      return;
+    }
+
+    mapRef.current &&
+      mapRef.current.fitBounds(bounds, {
+        bottom: 56,
+        left: 56,
+        right: 56,
+        top: 56,
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!driverLocation || !mapRef.current) {
       return;
     }
 
     const bounds = new window.google.maps.LatLngBounds();
+    bounds.extend(driverLocation);
+    bounds.extend(destination);
 
-    const route = response.routes[0];
+    fitBounds(bounds);
 
-    for (let i = 0; i < route.legs.length; i++) {
-      const leg = route.legs[i];
-      bounds.extend(leg.start_location);
-      bounds.extend(leg.end_location);
-    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [driverLocation]);
 
-    mapRef.current.fitBounds(bounds, {
-      bottom: 10,
-      left: 10,
-      right: 10,
-      top: 10,
-    });
-  }, []);
+  const getBoundsFromDirectionsResponse = useCallback(
+    (response: google.maps.DirectionsResult): google.maps.LatLngBounds => {
+      if (!response.routes.length) {
+        return null;
+      }
+
+      const bounds = new window.google.maps.LatLngBounds();
+      const route = response.routes[0];
+
+      for (let i = 0; i < route.legs.length; i++) {
+        const leg = route.legs[i];
+        bounds.extend(leg.start_location);
+        bounds.extend(leg.end_location);
+      }
+
+      return bounds;
+    },
+    []
+  );
 
   const handleDirectionsReady = useCallback(
     (
       response: google.maps.DirectionsResult,
       status: google.maps.DirectionsStatus
     ) => {
-      console.log("onDirectionsReady", status, response);
-
       if (status !== google.maps.DirectionsStatus.OK) {
         return;
       }
 
+      const bounds = getBoundsFromDirectionsResponse(response);
       setDirections(response);
-      fitMapBounds(response);
+      fitBounds(bounds);
     },
-    [fitMapBounds]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   const handleMapLoad = useCallback((map: google.maps.Map) => {
@@ -115,13 +145,15 @@ const TrackingMapsCom: React.FC<IProps> = ({
     mapRef.current = map;
   }, []);
 
-  const directionsServiceOptions = React.useMemo(() => {
-    return {
-      origin,
-      destination,
-      travelMode: TravelMode.DRIVING,
-    };
-  }, [origin, destination]);
+  const directionsServiceOptions =
+    useMemo<google.maps.DirectionsRequest>(() => {
+      return {
+        origin,
+        destination,
+        travelMode: TravelMode.DRIVING,
+        optimizeWaypoints: true,
+      };
+    }, [origin, destination]);
 
   if (!isLoaded) {
     return null;
@@ -135,21 +167,39 @@ const TrackingMapsCom: React.FC<IProps> = ({
     >
       <Marker
         title="Origin"
-        position={origin}
-        icon="/images/maps/map-pickup.png"
+        position={pickup}
+        options={{
+          icon: {
+            url: "/images/maps/maps-pickup@2x.png",
+            scaledSize: new google.maps.Size(MARKER_SIZE, MARKER_SIZE),
+          },
+        }}
+        zIndex={1}
       />
 
       <Marker
         title="Destination"
-        position={destination}
-        icon="/images/maps/map-dropoff.png"
+        position={dropoff}
+        options={{
+          icon: {
+            url: "/images/maps/maps-dropoff@2x.png",
+            scaledSize: new google.maps.Size(MARKER_SIZE, MARKER_SIZE),
+          },
+        }}
+        zIndex={2}
       />
 
       {driverLocation && (
         <Marker
           title="Driver"
           position={driverLocation}
-          icon="/images/maps/driver-location.png"
+          options={{
+            icon: {
+              url: "/images/maps/maps-driver@2x.png",
+              scaledSize: new google.maps.Size(MARKER_SIZE, MARKER_SIZE),
+            },
+          }}
+          zIndex={3}
         />
       )}
 
@@ -158,8 +208,8 @@ const TrackingMapsCom: React.FC<IProps> = ({
           directions={directions}
           options={{
             polylineOptions: {
-              strokeColor: "black",
-              strokeWeight: 3,
+              strokeColor: "#1A1528",
+              strokeWeight: 4,
             },
             suppressMarkers: true,
           }}

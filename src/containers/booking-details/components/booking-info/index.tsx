@@ -57,7 +57,10 @@ export const BookingInfo: React.FC<IProps> = ({
           <div className="flex items-center justify-center space-x-1">
             <span className="text-gray-400">Total:</span>
             <span className="font-semibold">
-              {currencyFormat(booking?.cost, { currency: booking?.currency })}
+              {currencyFormat(
+                order?.status === "cancelled" ? 0 : booking?.cost,
+                { currency: booking?.currency }
+              )}
             </span>
           </div>
         </div>

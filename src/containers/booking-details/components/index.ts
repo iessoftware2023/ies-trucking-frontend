@@ -1,3 +1,3 @@
 export * from "./booking-info";
-export * from "./maps-waiting-assign";
+export * from "./maps-empty";
 export * from "./tracking-maps";

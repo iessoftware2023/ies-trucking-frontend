@@ -61,18 +61,25 @@ export const distanceFormat = (n: number, options?: INumberFormatOptions) => {
 };
 
 export const durationFormat = (seconds: number) => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
+  const MINUTE_IN_SECONDS = 60;
+  const HOUR_IN_SECONDS = MINUTE_IN_SECONDS * 60;
+  const DAY_IN_SECONDS = HOUR_IN_SECONDS * 24;
 
-  const list = [];
+  const days = Math.floor(seconds / DAY_IN_SECONDS);
+  seconds %= DAY_IN_SECONDS;
+  const hours = Math.floor(seconds / HOUR_IN_SECONDS);
+  seconds %= HOUR_IN_SECONDS;
+  const minutes = Math.floor(seconds / MINUTE_IN_SECONDS);
+  seconds %= MINUTE_IN_SECONDS;
 
-  if (hours > 0) {
-    list.push(pluralize(hours, "hour"));
-  }
+  const resultArray: string[] = [];
 
-  if (minutes > 0) {
-    list.push(pluralize(minutes, "minute"));
-  }
+  if (days) resultArray.push(pluralize(days, "day"));
+  if (hours) resultArray.push(pluralize(hours, "hour"));
+  if (minutes) resultArray.push(pluralize(minutes, "minute"));
+  if (seconds) resultArray.push(pluralize(seconds, "second"));
 
-  return list.join(" ");
+  const result = resultArray.join(" ") || "0 second";
+
+  return result;
 };

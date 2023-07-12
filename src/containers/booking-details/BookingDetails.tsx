@@ -5,9 +5,10 @@ import React, { useMemo } from "react";
 
 import { useStores } from "@/models";
 
-import { BookingInfo, MapsWaitingAssign } from "./components";
+import { BookingInfo, MapsEmpty } from "./components";
 import { useFetchBookingInterval } from "./hooks/fetch-booking-interval";
 import { useFetchOrderInterval } from "./hooks/fetch-order-interval";
+import { extractLatLngFromModel } from "./utils";
 
 const TrackingMaps = dynamic(
   () =>
@@ -18,9 +19,6 @@ const TrackingMaps = dynamic(
     ssr: false,
   }
 );
-
-const extractLatLng = (location: { latitude: number; longitude: number }) =>
-  location ? { lat: location.latitude, lng: location.longitude } : null;
 
 type IProps = {
   bookingId: string;
@@ -35,40 +33,35 @@ export const BookingDetailsContainer: React.FC<IProps> = observer(
     const { booking } = operatorStore.bookingStore;
     const { order } = operatorStore.orderStore;
 
-    // const router = useRouter();
-
     useFetchBookingInterval(bookingId);
     useFetchOrderInterval(booking?.order?.id);
 
-    // useEffect(() => {
-    //   if (
-    //     !bookingId ||
-    //     ["cancelled", "expired"].includes(booking?.status) ||
-    //     ["cancelled", "completed"].includes(order?.status)
-    //   ) {
-    //     noti.error({ message: "Booking has been cancelled or expired" });
-    //     router.push("/");
-    //   }
-    //   // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [bookingId, booking?.status, order?.status]);
-
     const origin = useMemo(() => {
-      if (["order_pickup", "on_the_way_to_dropoff"].includes(order?.status)) {
-        return extractLatLng(booking?.pickup);
-      }
-
-      return {
-        lat: order?.tracking?.current?.lat ?? 0,
-        lng: order?.tracking?.current?.lng ?? 0,
+      const originObj = {
+        order_placed: booking?.pickup,
+        on_the_way_to_pickup: order?.tracking?.current,
+        order_pickup: booking?.pickup,
+        on_the_way_to_dropoff: booking?.pickup,
+        cancelled: booking?.pickup,
+        completed: booking?.pickup,
+        undefined: booking?.pickup,
       };
+
+      return extractLatLngFromModel(originObj[order?.status]);
     }, [order?.status, order?.tracking, booking?.pickup]);
 
     const destination = useMemo(() => {
-      if (["order_placed", "on_the_way_to_pickup"].includes(order?.status)) {
-        return extractLatLng(booking?.pickup);
-      }
+      const destinationObj = {
+        order_placed: booking?.dropoff,
+        on_the_way_to_pickup: booking?.pickup,
+        order_pickup: booking?.dropoff,
+        on_the_way_to_dropoff: booking?.dropoff,
+        cancelled: booking?.dropoff,
+        completed: booking?.dropoff,
+        undefined: booking?.dropoff,
+      };
 
-      return extractLatLng(booking?.dropoff);
+      return extractLatLngFromModel(destinationObj[order?.status]);
     }, [booking?.dropoff, booking?.pickup, order?.status]);
 
     const driverLocation = useMemo(() => {
@@ -80,7 +73,9 @@ export const BookingDetailsContainer: React.FC<IProps> = observer(
         lat: order?.tracking?.current?.lat,
         lng: order?.tracking?.current?.lng,
       };
-    }, [order?.tracking]);
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [order?.tracking?.current?.lat, order?.tracking?.current?.lng]);
 
     const handleAssignDriver = async (bookingId: string, driverId: string) => {
       const res = await operatorStore.bookingStore.assignDriver(
@@ -109,6 +104,10 @@ export const BookingDetailsContainer: React.FC<IProps> = observer(
     return (
       <div className="grid h-content grid-cols-2 divide-x">
         <div className="overflow-y-scroll bg-white">
+          <div>
+            {order?.tracking?.current?.lat}, {order?.tracking?.current?.lng}
+          </div>
+
           <BookingInfo
             booking={booking}
             order={order}
@@ -117,14 +116,30 @@ export const BookingDetailsContainer: React.FC<IProps> = observer(
         </div>
 
         <div className="overflow-hidden">
-          {booking?.status !== "confirmed" ? (
-            <MapsWaitingAssign />
-          ) : (
-            <TrackingMaps
-              origin={origin}
-              destination={destination}
-              driverLocation={driverLocation}
+          {![undefined, "confirmed"].includes(booking?.status) ? (
+            <MapsEmpty
+              title="Please wait a moment..."
+              description="The tracking map will be displayed when the order change on-going status"
             />
+          ) : (
+            <>
+              {[undefined, "cancelled", "completed"].includes(order?.status) ? (
+                <MapsEmpty
+                  title="The order has ended"
+                  description="TThe tracking map will only be displayed when the order has an on-going
+                status."
+                />
+              ) : (
+                <TrackingMaps
+                  pickup={extractLatLngFromModel(booking?.pickup)}
+                  dropoff={extractLatLngFromModel(booking?.dropoff)}
+                  //
+                  origin={origin}
+                  destination={destination}
+                  driverLocation={driverLocation}
+                />
+              )}
+            </>
           )}
         </div>
 

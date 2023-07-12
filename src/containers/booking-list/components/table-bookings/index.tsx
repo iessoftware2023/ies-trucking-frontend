@@ -248,13 +248,25 @@ export const TableBookings: React.FC<IProps> = ({
         fixed: "right",
         width: 128,
         align: "center",
-        render: (_, record) => (
-          <span>
-            {currencyFormat(record.total.cost, {
-              currency: record.total.currency,
-            })}
-          </span>
-        ),
+        // order?.status === "cancelled" ? 0 : booking?.cost
+        render: (_, record) => {
+          let cost = record.total.cost;
+
+          if (
+            record.rowType === "ORDER" &&
+            record.status?.orderStatus === "cancelled"
+          ) {
+            cost = 0;
+          }
+
+          return (
+            <span>
+              {currencyFormat(cost, {
+                currency: record.total.currency,
+              })}
+            </span>
+          );
+        },
       },
       {
         title: "Action",
