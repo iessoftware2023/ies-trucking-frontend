@@ -69,8 +69,8 @@ const LoginContainerCom: React.FC = () => {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/images/ies-logo.png"
-              className="mb-4 h-20 w-20 rounded-xl"
-              alt="Logo"
+              className="mb-4 h-20 w-20 rounded-2xl"
+              alt="IES Logo"
             />
 
             <h2 className="mb-2 text-2xl font-semibold">Hey, Hello 👋</h2>
