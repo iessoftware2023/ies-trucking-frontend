@@ -101,13 +101,13 @@ export const TabInfo: React.FC<IProps> = ({
       <div className="grid gap-4 rounded-lg border p-4 xl:grid-cols-2">
         <div className="space-y-4">
           <div>
-            <div className="up mb-1 uppercase text-gray-400">Sender info</div>
+            <div className="up mb-1 uppercase text-gray-400">Sender Info</div>
             <div className="font-semibold">{booking?.pickup?.fullName}</div>
             <div>{phoneFormat(booking?.pickup?.phoneNumber)}</div>
           </div>
 
           <div>
-            <div className="up mb-1 uppercase text-gray-400">DELIVERY ITEM</div>
+            <div className="up mb-1 uppercase text-gray-400">Delivery Item</div>
             <div className="flex flex-wrap gap-1">
               {booking?.cargoType && <Tag>{booking?.cargoType?.name}</Tag>}
 
@@ -121,8 +121,15 @@ export const TabInfo: React.FC<IProps> = ({
             </div>
           </div>
 
+          {booking?.note && (
+            <div>
+              <div className="up mb-1 uppercase text-gray-400">Item Detail</div>
+              <div>{booking?.note}</div>
+            </div>
+          )}
+
           <div>
-            <div className="up mb-1 uppercase text-gray-400">CUSTOMER INFO</div>
+            <div className="up mb-1 uppercase text-gray-400">Customer Info</div>
             <div className="font-semibold">{booking?.customerFullName}</div>
             <div>{phoneFormat(booking?.customer?.phoneNumber)}</div>
           </div>

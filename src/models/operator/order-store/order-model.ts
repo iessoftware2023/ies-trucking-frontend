@@ -73,6 +73,7 @@ export const OrderModel = types.model("OrderModel").props({
       cargoType: types.maybeNull(CargoTypesModel),
       cargoWeight: types.maybeNull(CargoWeightsModel),
       cargoSize: types.maybeNull(CargoSizeModel),
+      note: types.maybeNull(types.string),
       distance: types.maybeNull(types.number),
       duration: types.maybeNull(types.number),
       cost: types.maybeNull(types.number),

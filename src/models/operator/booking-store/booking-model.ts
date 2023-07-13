@@ -104,6 +104,7 @@ export const BookingModel = types
         length: types.maybeNull(types.number),
       })
     ),
+    note: types.maybeNull(types.string),
     distance: types.maybeNull(types.number),
     duration: types.maybeNull(types.number),
     cost: types.maybeNull(types.number),
