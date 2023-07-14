@@ -126,7 +126,7 @@ export const BookingDetailsContainer: React.FC<IProps> = observer(
               {[undefined, "cancelled", "completed"].includes(order?.status) ? (
                 <MapsEmpty
                   title="The order has ended"
-                  description="TThe tracking map will only be displayed when the order has an on-going
+                  description="The tracking map will only be displayed when the order has an on-going
                 status."
                 />
               ) : (
