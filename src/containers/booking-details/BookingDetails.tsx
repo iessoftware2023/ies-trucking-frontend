@@ -104,10 +104,6 @@ export const BookingDetailsContainer: React.FC<IProps> = observer(
     return (
       <div className="grid h-content grid-cols-2 divide-x">
         <div className="overflow-y-scroll bg-white">
-          <div>
-            {order?.tracking?.current?.lat}, {order?.tracking?.current?.lng}
-          </div>
-
           <BookingInfo
             booking={booking}
             order={order}
