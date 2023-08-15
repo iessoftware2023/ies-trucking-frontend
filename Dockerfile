@@ -1,4 +1,4 @@
-FROM node:18-alpine as deps
+FROM --platform=linux/amd64 node:18-alpine AS deps
 
 WORKDIR /app
 
