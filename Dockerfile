@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:18-alpine AS deps
+FROM --platform=linux/amd64 node:18.16.0-alpine AS deps
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ COPY package.json yarn.lock ./
 
 RUN yarn install --frozen-lockfile 
 
-FROM node:18-alpine as builder
+FROM --platform=linux/amd64 node:18.16.0-alpine as builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ COPY . .
 
 RUN yarn build
 
-FROM node:18-alpine as runner
+FROM --platform=linux/amd64 node:18.16.0-alpine as runner
 
 WORKDIR /app
 
