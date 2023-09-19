@@ -1,22 +1,36 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { useEffect, useRef } from "react";
 
 export const useInterval = (callback: () => void, delay: number): void => {
-  const savedCallback = useRef(null);
+  const savedCallback = useRef<() => void>(() => {});
+  const timeoutId = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     savedCallback.current = callback;
   }, [callback]);
 
   useEffect(() => {
-    if (!savedCallback) {
-      return;
+    const runTask = async () => {
+      // Perform an asynchronous task here
+      await savedCallback.current();
+
+      // Schedule the next interval
+      if (delay > 0) {
+        timeoutId.current = setTimeout(runTask, delay);
+      }
+    };
+
+    if (timeoutId.current) {
+      clearTimeout(timeoutId.current);
     }
 
-    const handler = (...args: unknown[]) => savedCallback.current(...args);
+    // Start the task
+    runTask();
 
-    if (delay !== null) {
-      const id = setInterval(handler, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
+    return () => {
+      if (timeoutId.current) {
+        clearTimeout(timeoutId.current);
+      }
+    };
+  }, [delay, savedCallback]);
 };

@@ -2,7 +2,7 @@ import { Button, Input, notification, Segmented } from "antd";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 
 import { useConfirmDialog, useInterval } from "@/hooks";
 import { useStores } from "@/models";
@@ -38,38 +38,43 @@ const BookingListContainerCom: React.FC = () => {
   const isAppliedFilter =
     formFilterValues?.dateRange?.length || formFilterValues?.status?.length;
 
-  const fetchData = async (shouldLoading = true) => {
-    if (shouldLoading) {
-      setIsLoading(true);
-    }
+  const fetchData = useCallback(
+    async (shouldLoading = true) => {
+      if (shouldLoading) {
+        setIsLoading(true);
+      }
 
-    if (tabKey === "WAITING_ASSIGN") {
-      console.log("get bookings");
-      await operatorStore.bookingStore.getBookings();
-    } else {
-      console.log("get orders");
-      await operatorStore.orderStore.getOrders();
-    }
+      if (tabKey === "WAITING_ASSIGN") {
+        console.log("get bookings");
+        console.log("start: ", new Date().toUTCString());
+        await operatorStore.bookingStore.getBookings();
+        console.log("end: ", new Date().toUTCString());
+      } else {
+        console.log("get orders");
+        console.log("start: ", new Date().toUTCString());
+        await operatorStore.orderStore.getOrders();
+        console.log("end: ", new Date().toUTCString());
+      }
 
-    setRefreshFlag(new Date().toISOString());
+      setRefreshFlag(new Date().toISOString());
 
-    if (shouldLoading) {
-      setIsLoading(false);
-    }
-  };
+      if (shouldLoading) {
+        setIsLoading(false);
+      }
+    },
+    [operatorStore.bookingStore, operatorStore.orderStore, tabKey]
+  );
 
   const handleAssignDriver = async (id: string, driverId: string) => {
-    const api = tabKey === 'WAITING_ASSIGN'
-      ? operatorStore.bookingStore.assignDriver
-      : operatorStore.orderStore.assignDriver
-    const res = await api(
-      id,
-      driverId
-    );
+    const api =
+      tabKey === "WAITING_ASSIGN"
+        ? operatorStore.bookingStore.assignDriver
+        : operatorStore.orderStore.assignDriver;
+    const res = await api(id, driverId);
 
     if (res.kind === "conflict") {
       const content = res.errors?.[0]?.message || "Failed to assign driver";
-      noti.error({message: content});
+      noti.error({ message: content });
       return false;
     }
 
@@ -155,14 +160,7 @@ const BookingListContainerCom: React.FC = () => {
     setIsOpenFilter(false);
   };
 
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tabKey]);
-
-  useInterval(() => {
-    fetchData(false);
-  }, REFRESH_DATA_INTERVAL);
+  useInterval(fetchData, REFRESH_DATA_INTERVAL);
 
   const tableData = useMemo(() => {
     if (tabKey === "WAITING_ASSIGN") {
@@ -252,4 +250,4 @@ const BookingListContainerCom: React.FC = () => {
   );
 };
 
-export const BookingListContainer = observer(BookingListContainerCom);
+export const BookingListContainer = memo(observer(BookingListContainerCom));

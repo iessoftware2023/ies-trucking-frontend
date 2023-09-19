@@ -20,7 +20,7 @@ export const PolicyContainer = () => {
           color: blue;
         }
         `}</_JSXStyle>
-      <div className="mx-auto my-10 w-[800px] rounded-2xl p-4 shadow-lg">
+      <div className="mx-auto my-10 max-w-[800px] rounded-2xl p-4 shadow-lg">
         <h1 className="py-8 text-center text-4xl font-bold">
           Logistics App Privacy Policy
         </h1>

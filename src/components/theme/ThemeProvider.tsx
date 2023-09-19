@@ -12,9 +12,7 @@ export const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return <div className="hidden">{children}</div>;
-  }
+  if (!mounted) return null;
 
   return (
     <ConfigProvider
