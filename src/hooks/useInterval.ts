@@ -32,5 +32,5 @@ export const useInterval = (callback: () => void, delay: number): void => {
         clearTimeout(timeoutId.current);
       }
     };
-  }, [delay, savedCallback]);
+  }, [delay, callback]);
 };
