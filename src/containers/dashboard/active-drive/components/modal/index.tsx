@@ -2,19 +2,19 @@ import { Modal } from "antd";
 import classNames from "classnames";
 import React from "react";
 
-import { TableActiveTrucks } from "../table";
+import { TableActiveDrivers } from "../table";
 
 interface IProps {
+  statusKey: string;
   isModalOpen: boolean;
-  handleOk: () => void;
-  handleCancel: () => void;
+  onChangeTabKey: (statusKey: string) => void;
   data: { status: string; title: string; value: number }[];
   statuses: { status: string; title: string; count: number }[];
-  statusKey: string;
-  onChangeTabKey: (statusKey: string) => void;
+  handleOk: () => void;
+  handleCancel: () => void;
 }
 
-export const ListActiveTruckModal: React.FC<IProps> = ({
+export const ListActiveDriverModal: React.FC<IProps> = ({
   isModalOpen,
   handleCancel,
   handleOk,
@@ -27,7 +27,7 @@ export const ListActiveTruckModal: React.FC<IProps> = ({
   };
   return (
     <Modal
-      title="Active Trucks"
+      title="Active Drivers"
       open={isModalOpen}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -54,7 +54,7 @@ export const ListActiveTruckModal: React.FC<IProps> = ({
           </div>
         </div>
         <div className="min-h-[500px] overflow-hidden">
-          <TableActiveTrucks data={[]} isLoading={false} status={statusKey} />
+          <TableActiveDrivers data={[]} isLoading={false} status={statusKey} />
         </div>
       </div>
     </Modal>

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import { ActiveDrive } from "./active-drive";
+import { ActiveDriver } from "./active-drive";
 import { ActiveTruck } from "./active-truck";
 import { BookingHistory } from "./booking-history";
 import { TodayIncome } from "./today-income";
@@ -18,7 +18,7 @@ export const DashboardContainer = observer(() => {
         <ActiveTruck />
       </div>
       <div className="col-[1/2] flex lg:col-[3/4]">
-        <ActiveDrive />
+        <ActiveDriver />
       </div>
 
       <div className="flex md:col-[1/3] lg:col-[1/3] lg:row-[2/4]">

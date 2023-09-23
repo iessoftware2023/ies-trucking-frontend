@@ -105,7 +105,7 @@ type IProps = {
   isLoading?: boolean;
 };
 
-export const TableActiveTrucks: React.FC<IProps> = ({
+export const TableActiveDrivers: React.FC<IProps> = ({
   status,
   data = [],
   isLoading,
