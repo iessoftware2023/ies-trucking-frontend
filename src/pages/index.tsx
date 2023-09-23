@@ -8,7 +8,7 @@ const BookingListContainer = dynamic(() =>
 
 export default function HomePage() {
   return (
-    <LayoutBase title="Home" menuActiveKey="DASHBOARD">
+    <LayoutBase title="Home" menuActiveKey="BOOKING">
       <BookingListContainer />
     </LayoutBase>
   );

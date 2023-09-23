@@ -1,3 +1,4 @@
+import makeInspectable from "mobx-devtools-mst";
 import { applySnapshot } from "mobx-state-tree";
 import { NextPageContext } from "next";
 
@@ -32,6 +33,8 @@ export function initializeStore(
 
   // Create the store once in the client
   if (!store) store = _store;
+
+  makeInspectable(store);
 
   return store;
 }

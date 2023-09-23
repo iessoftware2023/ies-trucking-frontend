@@ -18,7 +18,7 @@ const BookingDetailsPage: NextPage<IProps> = ({ bookingId }) => {
     <LayoutBase
       title="Booking Details"
       headerTitle="Booking Details"
-      menuActiveKey="DASHBOARD"
+      menuActiveKey="BOOKING"
     >
       <BookingDetailsContainer bookingId={bookingId} />
     </LayoutBase>

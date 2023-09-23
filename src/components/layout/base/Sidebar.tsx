@@ -27,8 +27,10 @@ export const Sidebar: React.FC<IProps> = ({
   const handleMenuClick = (key: string) => {
     switch (key) {
       case "DASHBOARD":
-        router.push("/");
+        router.push("/dashboard");
         break;
+      case "BOOKING":
+        router.push("/");
       default:
         break;
     }
@@ -49,7 +51,7 @@ export const Sidebar: React.FC<IProps> = ({
         left: 0,
         top: 0,
         bottom: 0,
-        zIndex: 9999,
+        // zIndex: 9999,
       }}
     >
       <div className="flex h-full flex-col">
@@ -89,6 +91,11 @@ export const Sidebar: React.FC<IProps> = ({
               key: "DASHBOARD",
               icon: <AppstoreOutlined />,
               label: "Dashboard",
+            },
+            {
+              key: "BOOKING",
+              icon: <AppstoreOutlined />,
+              label: "Manage Booking",
             },
           ]}
           selectedKeys={[menuActiveKey]}

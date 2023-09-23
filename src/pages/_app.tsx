@@ -21,6 +21,7 @@ import { redirectAuth } from "@/utils/router";
 const inter = Inter({
   display: "swap",
   subsets: ["vietnamese"],
+  variable: "--font-inter",
 });
 
 function IESWebApp({ Component, pageProps }: AppProps) {
@@ -30,21 +31,23 @@ function IESWebApp({ Component, pageProps }: AppProps) {
   );
 
   return (
-    <RootStoreProvider value={rootStore}>
-      <NextNprogress
-        color="#ffd31a"
-        height={3}
-        options={{
-          showSpinner: false,
-        }}
-      />
+    <>
+      <RootStoreProvider value={rootStore}>
+        <NextNprogress
+          color="#ffd31a"
+          height={3}
+          options={{
+            showSpinner: false,
+          }}
+        />
 
-      <ThemeProvider>
-        <div className={inter.className}>
-          <Component {...pageProps} />
-        </div>
-      </ThemeProvider>
-    </RootStoreProvider>
+        <ThemeProvider>
+          <div className={`${inter.variable} ${inter.className}`}>
+            <Component {...pageProps} />
+          </div>
+        </ThemeProvider>
+      </RootStoreProvider>
+    </>
   );
 }
 

@@ -29,6 +29,7 @@
     "animate.css": "^4.1.1",
     "antd": "^5.6.2",
     "apisauce": "2.1.5",
+    "classnames": "^2.3.2",
     "clsx": "^1.2.1",
     "dayjs": "^1.11.8",
     "eslint": "8.34.0",
@@ -59,6 +60,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-tailwindcss": "^3.8.3",
+    "mobx-devtools-mst": "^0.9.30",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
     "tailwindcss": "^3.2.6"

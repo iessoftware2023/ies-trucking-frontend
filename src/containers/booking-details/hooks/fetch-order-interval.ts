@@ -14,7 +14,9 @@ export const useFetchOrderInterval = (orderId: string) => {
     const fetchData = async () => {
       console.log("useFetchOrderInterval");
       if (orderId) {
+        console.time("order");
         await getOrder(orderId);
+        console.timeEnd("order");
       }
     };
 

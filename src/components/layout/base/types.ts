@@ -1,1 +1,1 @@
-export type IMenuActiveKey = "DASHBOARD" | "PROFILE";
+export type IMenuActiveKey = "DASHBOARD" | "PROFILE" | "BOOKING";
