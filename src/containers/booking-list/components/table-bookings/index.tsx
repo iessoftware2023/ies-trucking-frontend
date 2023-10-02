@@ -137,9 +137,16 @@ export interface ITableRow {
 
 type IProps = {
   tabKey: ITrackingTabKey;
+  pagination: {
+    total: number;
+    page: number;
+    pages: number;
+    limit: number;
+  };
 
   data: ITableRow[];
   isLoading?: boolean;
+  loadData: (page: number, pageSize: number) => void;
 
   onAssignDriver: (bookingId: string, driverId: string) => Promise<boolean>;
   onCancelBooking: (bookingId: string, code: string) => Promise<boolean>;
@@ -150,9 +157,11 @@ export const TableBookings: React.FC<IProps> = ({
   tabKey,
   data = [],
   isLoading,
+  pagination,
   onAssignDriver,
   onCancelBooking,
   onCancelOrder,
+  loadData,
 }) => {
   const columns = useMemo<ColumnsType<ITableRow>>(() => {
     return [
@@ -350,10 +359,16 @@ export const TableBookings: React.FC<IProps> = ({
       loading={isLoading}
       pagination={{
         position: ["bottomCenter"],
-        defaultPageSize: 50,
+        defaultPageSize: 10,
         showSizeChanger: true,
         pageSizeOptions: [10, 25, 50],
         style: { marginBottom: 0 },
+        total: pagination.total,
+        current: pagination.page,
+        pageSize: pagination.limit,
+        onChange(page, pageSize) {
+          loadData(page, pageSize);
+        },
         showTotal: (total) => <TableTotal tabKey={tabKey} count={total} />,
       }}
       locale={{

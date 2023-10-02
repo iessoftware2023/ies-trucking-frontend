@@ -23,6 +23,14 @@ export const BookingConfigModel = types.model("BookingConfigModel").props({
   cargoWeights: types.array(CargoWeightsModel),
 });
 
+export const BookingPaginationModel = types
+  .model("BookingPaginationModel")
+  .props({
+    page: types.maybeNull(types.optional(types.number, 1)),
+    limit: types.maybeNull(types.optional(types.number, 10)),
+    total: types.maybeNull(types.optional(types.number, 0)),
+  });
+
 export const BOOKING_STATUS_AS_CONST = [
   "pending",
   "confirmed",
@@ -147,3 +155,4 @@ export const BookingModel = types
 
 export type IBooking = Instance<typeof BookingModel>;
 export type IBookingStatus = (typeof BOOKING_STATUS_AS_CONST)[number];
+export type IBookingPagination = Instance<typeof BookingPaginationModel>;

@@ -4,20 +4,24 @@ import {
   ITotalBooking,
 } from "@/models/dashboard-store";
 
-import { GeneralApiProblem } from "../../api-problem";
 import { Response } from "../../type";
 
-export type RequestGetTotalBookingResult = Response<ITotalBooking>;
-export type RequestGetTotalBookingResponse =
-  | GeneralApiProblem
-  | { kind: "ok"; result: RequestGetTotalBookingResult };
+export interface IBookingHistory {
+  date: string;
+  total: number;
+}
 
-export type RequestGetActiveTruckResult = Response<IActiveTruck>;
-export type RequestGetActiveTruckResponse =
-  | GeneralApiProblem
-  | { kind: "ok"; result: RequestGetActiveTruckResult };
+export type RequestGetTotalBookingResponse = ITotalBooking;
+export type RequestGetTotalBookingResult =
+  Response<RequestGetTotalBookingResponse>;
 
+export type RequestGetActiveTruckResponse = IActiveTruck;
+export type RequestGetActiveTruckResult =
+  Response<RequestGetActiveTruckResponse>;
+
+export type RequestGetActiveDriverResponse = IActiveDriver;
 export type RequestGetActiveDriverResult = Response<IActiveDriver>;
-export type RequestGetActiveDriverResponse =
-  | GeneralApiProblem
-  | { kind: "ok"; result: RequestGetActiveDriverResult };
+
+export type RequestGetBookingHistoryResponse = IBookingHistory[];
+export type RequestGetBookingHistoryResult =
+  Response<RequestGetBookingHistoryResponse>;

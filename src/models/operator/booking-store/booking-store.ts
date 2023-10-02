@@ -5,19 +5,27 @@ import { cast, flow, Instance, SnapshotOut, types } from "mobx-state-tree";
 import { withEnvironment } from "@/models/extensions";
 import { OperatorBookingTypes } from "@/services/api/operator";
 
-import { BookingConfigModel, BookingModel } from "./booking-model";
+import {
+  BookingConfigModel,
+  BookingModel,
+  BookingPaginationModel,
+} from "./booking-model";
 
 export const OperatorBookingStoreModel = types
   .model("OperatorBookingStoreModel")
   .props({
     configs: types.optional(BookingConfigModel, {}),
     bookings: types.optional(types.map(BookingModel), {}),
+    pagination: types.optional(BookingPaginationModel, {}),
     booking: types.maybe(types.safeReference(BookingModel)),
   })
   .extend(withEnvironment)
   .views((self) => ({
     get bookingsView() {
       return Array.from(self.bookings.values());
+    },
+    get pages() {
+      return Math.ceil(self.pagination.total / self.pagination.limit);
     },
   }))
   .actions((self) => ({
@@ -29,15 +37,22 @@ export const OperatorBookingStoreModel = types
     },
   }))
   .actions((self) => ({
-    getBookings: flow(function* () {
+    getBookings: flow(function* ({
+      page,
+      limit,
+    }: {
+      page: number;
+      limit: number;
+    }) {
       const result: OperatorBookingTypes.RequestBookingsResult =
-        yield self.operatorBookingApi.getBookings();
+        yield self.operatorBookingApi.getBookings({ page, limit });
 
       if (result.kind === "ok") {
         self.bookings.clear();
-        result.result.forEach((booking) => {
+        result.result.data.forEach((booking) => {
           self.bookings.set(booking.id.toString(), cast(booking));
         });
+        self.pagination = result.result.pagination;
       }
       return result;
     }),

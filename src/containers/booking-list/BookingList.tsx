@@ -38,29 +38,44 @@ const BookingListContainerCom: React.FC = () => {
   const isAppliedFilter =
     formFilterValues?.dateRange?.length || formFilterValues?.status?.length;
 
-  const fetchData = useCallback(
-    async (shouldLoading = true) => {
-      if (shouldLoading) {
-        setIsLoading(true);
+  const loadData = useCallback(
+    async (page: number, limit: number) => {
+      setIsLoading(true);
+      if (tabKey === "WAITING_ASSIGN") {
+        await operatorStore.bookingStore.getBookings({ limit, page });
+      } else {
+        await operatorStore.orderStore.getOrders({
+          limit,
+          page,
+          type: tabKey.toLowerCase(),
+        });
       }
+      setIsLoading(false);
+      setRefreshFlag(new Date().toISOString());
+    },
+    [operatorStore.bookingStore, operatorStore.orderStore, tabKey]
+  );
+
+  const fetchData = useCallback(
+    async (isRefresh = true) => {
+      setIsLoading(true);
 
       if (tabKey === "WAITING_ASSIGN") {
-        console.log("get bookings");
-        console.log("start: ", new Date().toUTCString());
-        await operatorStore.bookingStore.getBookings();
-        console.log("end: ", new Date().toUTCString());
+        await operatorStore.bookingStore.getBookings({
+          limit: isRefresh ? operatorStore.bookingStore.pagination.limit : 10,
+          page: isRefresh ? operatorStore.bookingStore.pagination.page : 1,
+        });
       } else {
-        console.log("get orders");
-        console.log("start: ", new Date().toUTCString());
-        await operatorStore.orderStore.getOrders();
-        console.log("end: ", new Date().toUTCString());
+        await operatorStore.orderStore.getOrders({
+          limit: isRefresh ? operatorStore.orderStore.pagination.limit : 10,
+          page: isRefresh ? operatorStore.orderStore.pagination.page : 1,
+          type: tabKey.toLowerCase(),
+        });
       }
 
       setRefreshFlag(new Date().toISOString());
 
-      if (shouldLoading) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     },
     [operatorStore.bookingStore, operatorStore.orderStore, tabKey]
   );
@@ -160,7 +175,39 @@ const BookingListContainerCom: React.FC = () => {
     setIsOpenFilter(false);
   };
 
-  useInterval(fetchData, REFRESH_DATA_INTERVAL);
+  useInterval(fetchData, REFRESH_DATA_INTERVAL, [tabKey]);
+
+  const pagination = useMemo(() => {
+    switch (tabKey) {
+      case "WAITING_ASSIGN":
+        return {
+          ...operatorStore.bookingStore.pagination,
+          pages: operatorStore.bookingStore?.pages,
+        };
+      case "HISTORY":
+      case "ON_GOING":
+        return {
+          ...operatorStore.orderStore.pagination,
+          pages: operatorStore.orderStore?.pages,
+        };
+      default:
+        return {
+          total: 0,
+          limit: 10,
+          page: 1,
+          pages: 0,
+        };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    operatorStore.bookingStore?.pages,
+    operatorStore.bookingStore.pagination.limit,
+    operatorStore.bookingStore.pagination.page,
+    operatorStore.orderStore?.pages,
+    operatorStore.orderStore.pagination.limit,
+    operatorStore.orderStore.pagination.page,
+    tabKey,
+  ]);
 
   const tableData = useMemo(() => {
     if (tabKey === "WAITING_ASSIGN") {
@@ -229,6 +276,8 @@ const BookingListContainerCom: React.FC = () => {
           tabKey={tabKey}
           data={tableData}
           isLoading={isLoading}
+          pagination={pagination}
+          loadData={loadData}
           //
           onAssignDriver={handleAssignDriver}
           onCancelBooking={handleCancelBooking}

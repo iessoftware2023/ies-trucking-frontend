@@ -150,5 +150,12 @@ export const OrderModel = types.model("OrderModel").props({
   createdAt: types.maybeNull(types.string),
 });
 
+export const OrderPaginationModel = types.model("OrderPaginationModel").props({
+  total: types.maybeNull(types.optional(types.number, 0)),
+  limit: types.maybeNull(types.optional(types.number, 10)),
+  page: types.maybeNull(types.optional(types.number, 1)),
+});
+
 export type IOrder = Instance<typeof OrderModel>;
 export type IOrderStatus = (typeof ORDER_STATUS_AS_CONST)[number];
+export type IOrderPagination = Instance<typeof OrderPaginationModel>;

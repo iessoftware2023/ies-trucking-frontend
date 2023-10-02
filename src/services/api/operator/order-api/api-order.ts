@@ -19,9 +19,22 @@ const routes = {
 };
 
 export const OperatorOrderApi = {
-  async getOrders(status?: string): Promise<Types.RequestGetOrdersResult> {
+  async getOrders({
+    type,
+    status,
+    page = 1,
+    limit = 10,
+  }: {
+    type?: string;
+    status?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<Types.RequestGetOrdersResult> {
     const url = routes.list();
-    const result: ApiResponse<IOrder[]> = await api.get(url, { status });
+    const result: ApiResponse<Types.RequestGetOrdersResponse> = await api.get(
+      url,
+      { type, status, page, limit }
+    );
     return returnResponse(result);
   },
 

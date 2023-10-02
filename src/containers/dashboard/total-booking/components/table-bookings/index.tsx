@@ -1,17 +1,23 @@
-import { Space, Table } from "antd";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+
+import { Dropdown, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
+import _ from "lodash";
 import Link from "next/link";
 import React, { useMemo } from "react";
 
-import { AssignDriver } from "@/containers/booking-list/components/assign-driver";
-import { IDriver } from "@/containers/booking-list/types";
-import { IBookingStatus, IOrder, IOrderStatus } from "@/models/operator";
+import { IBookingStatus, IOrderStatus } from "@/models/operator";
 import { currencyFormat } from "@/utils/number";
-import { phoneFormat } from "@/utils/string";
+import { phoneFormat, pluralize } from "@/utils/string";
+
+import { IDriver, ITrackingTabKey } from "../../types";
+import { AssignDriver } from "../assign-driver";
+import { OrderStatus } from "../order-status";
+import { checkCanAssignDriver, checkCanCancelBooking } from "./utils";
 
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
@@ -36,10 +42,28 @@ dayjs.updateLocale("en", {
   },
 });
 
+const RenderCountdown: React.FC<{ date: string }> = ({ date }) => {
+  const dateObj = dayjs(date);
+
+  if (dayjs().isAfter(dateObj)) {
+    return <span className="text-red-400">Overtime</span>;
+  }
+
+  const dateStr = `${dateObj.fromNow(true)} left`;
+
+  return <span className="text-blue-400">{_.capitalize(dateStr)}</span>;
+};
+
 const RenderAddress: React.FC<{ address: string }> = ({ address }) => {
   // const parsed = parseAddress(address);
 
-  return <div className="flex flex-col">{address}</div>;
+  return (
+    <div className="flex flex-col">
+      {address}
+      {/* <span className="font-semibold">{parsed.firstLine}</span>
+      <span>{parsed.secondLine}</span> */}
+    </div>
+  );
 };
 
 const RenderDate: React.FC<{ date: string }> = ({ date }) => {
@@ -51,45 +75,35 @@ const RenderDate: React.FC<{ date: string }> = ({ date }) => {
   );
 };
 
-const TableTotal: React.FC<{ count: number }> = ({ count }) => {
+const TableTotal: React.FC<{ tabKey: ITrackingTabKey; count: number }> = ({
+  tabKey,
+  count,
+}) => {
   return (
-    <span className="font-medium text-gray-500">Total {count} booking</span>
+    <span className="font-medium text-gray-500">
+      Total{" "}
+      {tabKey === "WAITING_ASSIGN"
+        ? pluralize(count, "booking")
+        : pluralize(count, "order")}
+    </span>
   );
 };
 
-const TableEmpty: React.FC<{ tabKey: string; isLoading: boolean }> = ({
-  tabKey,
-  isLoading,
-}) => {
-  const emptyTextObj = {
-    all: "There are no bookings in your system. Please check the bookings again.",
-    order_placed:
-      "Currently, there are no bookings in order placed status. Please check the bookings again.",
-    on_the_way_to_pickup:
-      "Currently, there are no bookings in on the way to pick-up status. Please check the bookings again.",
-    order_pickup:
-      "Currently, there are no bookings in pick-up order status. Please check the bookings again.",
-    on_the_way_to_dropoff:
-      "Currently, there are no bookings in on the way to delivery status. Please check the bookings again.",
-    completed:
-      "Currently, there are no bookings in delivery completed status. Please check the bookings again.",
-    cancelled:
-      "Currently, there are no bookings in order cancelled status. Please check the bookings again.",
-  };
+const TableEmpty: React.FC<{ tabKey: ITrackingTabKey }> = ({ tabKey }) => {
   return (
-    <div className="flex flex-col items-center gap-y-2 p-8">
+    <div className="flex flex-col items-center p-8">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/images/empty-booking@2x.png"
-        className="h-40"
-        alt="empty truck"
-      />
-      {!isLoading ? (
-        <>
-          <div className="text-lg font-semibold text-gray-800">No trucks</div>
-          <div className="max-w-[370px] text-base">{emptyTextObj[tabKey]}</div>
-        </>
-      ) : null}
+      <img src="/images/empty-booking@2x.png" className="mb-2 h-40" alt="" />
+
+      <div className="text-lg font-semibold text-gray-800">
+        Your {tabKey === "WAITING_ASSIGN" ? "booking" : "order"} is empty
+      </div>
+
+      <div className="text-base">
+        Make it easier to receive{" "}
+        {tabKey === "WAITING_ASSIGN" ? "booking" : "order"} and track everything
+        here
+      </div>
     </div>
   );
 };
@@ -122,18 +136,34 @@ export interface ITableRow {
 }
 
 type IProps = {
-  tabKey: string;
+  tabKey: ITrackingTabKey;
+  pagination: {
+    total: number;
+    page: number;
+    pages: number;
+    limit: number;
+  };
 
-  data: IOrder[];
+  data: ITableRow[];
   isLoading?: boolean;
+  loadData: (page: number, pageSize: number) => void;
+
+  onAssignDriver: (bookingId: string, driverId: string) => Promise<boolean>;
+  onCancelBooking: (bookingId: string, code: string) => Promise<boolean>;
+  onCancelOrder: (orderId: string, code: string) => Promise<boolean>;
 };
 
 export const TableBookings: React.FC<IProps> = ({
   tabKey,
   data = [],
   isLoading,
+  pagination,
+  onAssignDriver,
+  onCancelBooking,
+  onCancelOrder,
+  loadData,
 }) => {
-  const columns = useMemo<ColumnsType<IOrder>>(() => {
+  const columns = useMemo<ColumnsType<ITableRow>>(() => {
     return [
       {
         title: "ID",
@@ -142,10 +172,27 @@ export const TableBookings: React.FC<IProps> = ({
         width: 160,
         align: "center",
         fixed: "left",
-        render: (text) => (
+        render: (text, record) => (
           <div className="flex flex-col">
             <span className="font-semibold">#{text}</span>
+
+            {record.rowType === "BOOKING" && (
+              <RenderCountdown date={record.pickUpTime} />
+            )}
           </div>
+        ),
+      },
+      {
+        title: "Status",
+        dataIndex: "status",
+        key: "status",
+        width: 196,
+        align: "center",
+        render: (_) => (
+          <OrderStatus
+            bookingStatus={_.bookingStatus}
+            orderStatus={_.orderStatus}
+          />
         ),
       },
       {
@@ -153,22 +200,27 @@ export const TableBookings: React.FC<IProps> = ({
         dataIndex: "driver",
         key: "driver",
         width: 224,
-        render: (driver: IDriver, record) => {
-          return driver.id ? (
-            <AssignDriver bookingId={record.id} driver={driver} readOnly />
-          ) : (
-            <span>Unassigned</span>
-          );
-        },
+        render: (driver: IDriver, record) => (
+          <AssignDriver
+            bookingId={record.id}
+            driver={driver}
+            driverOptions={record.drivers}
+            onAssignDriver={onAssignDriver}
+            readOnly={
+              !checkCanAssignDriver(
+                record.status.bookingStatus,
+                record.status.orderStatus
+              )
+            }
+          />
+        ),
       },
       {
         title: "Pick-up location",
         dataIndex: "pickUpLocation",
         key: "pickUpLocation",
         width: 256,
-        render: (_, record) => (
-          <RenderAddress address={record.booking.pickup.address} />
-        ),
+        render: (text) => <RenderAddress address={text} />,
       },
       {
         title: "Pick-up time",
@@ -182,9 +234,7 @@ export const TableBookings: React.FC<IProps> = ({
         dataIndex: "deliveryLocation",
         key: "deliveryLocation",
         width: 256,
-        render: (_, record) => (
-          <RenderAddress address={record.booking.dropoff.address} />
-        ),
+        render: (text) => <RenderAddress address={text} />,
       },
       {
         title: "Delivery time",
@@ -198,17 +248,15 @@ export const TableBookings: React.FC<IProps> = ({
         dataIndex: "typeOfTruck",
         key: "typeOfTruck",
         width: 256,
-        render: (text, record) => (
+        render: (text) => (
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={encodeURI(
-                `/icons/truck-types/png/${record.truck.truckType.name}.png`
-              )}
+              src={encodeURI(`/icons/truck-types/png/${text}.png`)}
               alt=""
               className="mb-0.5 h-3"
             />
-            <span>{record.truck.truckType.name}</span>
+            <span>{text}</span>
           </div>
         ),
       },
@@ -217,12 +265,10 @@ export const TableBookings: React.FC<IProps> = ({
         dataIndex: "customer",
         key: "customer",
         width: 200,
-        render: (_, record) => (
+        render: (text) => (
           <div className="flex flex-col">
-            <span className="font-semibold">
-              {record.booking.pickup.fullName}
-            </span>
-            <span>{phoneFormat(record.booking.pickup.phoneNumber)}</span>
+            <span className="font-semibold">{text.name}</span>
+            <span>{phoneFormat(text.phone)}</span>
           </div>
         ),
       },
@@ -232,17 +278,21 @@ export const TableBookings: React.FC<IProps> = ({
         fixed: "right",
         width: 128,
         align: "center",
+        // order?.status === "cancelled" ? 0 : booking?.cost
         render: (_, record) => {
-          let cost = record.booking.cost;
+          let cost = record.total.cost;
 
-          if (record.status === "cancelled") {
+          if (
+            record.rowType === "ORDER" &&
+            record.status?.orderStatus === "cancelled"
+          ) {
             cost = 0;
           }
 
           return (
             <span>
               {currencyFormat(cost, {
-                currency: record.booking.currency,
+                currency: record.total.currency,
               })}
             </span>
           );
@@ -257,16 +307,47 @@ export const TableBookings: React.FC<IProps> = ({
         render: (_, record) => (
           <Space size="middle">
             <Link
-              href={`/booking/${record.booking.id}`}
+              href={`/booking/${record.bookingId}`}
               className="text-blue-500 underline"
             >
               Detail
             </Link>
+
+            {checkCanCancelBooking(
+              record.status.bookingStatus,
+              record.status.orderStatus
+            ) && (
+              <Dropdown
+                menu={{
+                  items: [
+                    record.rowType === "BOOKING"
+                      ? {
+                          key: "CANCEL_BOOKING",
+                          label: "Cancel Booking",
+                        }
+                      : {
+                          key: "CANCEL_ORDER",
+                          label: "Cancel Order",
+                        },
+                  ],
+                  onClick: (event) => {
+                    if (event.key === "CANCEL_BOOKING") {
+                      onCancelBooking?.(record?.bookingId, record?.code);
+                    }
+                    if (event.key === "CANCEL_ORDER") {
+                      onCancelOrder?.(record?.orderId, record?.code);
+                    }
+                  },
+                }}
+              >
+                <a className="text-blue-500 underline">More</a>
+              </Dropdown>
+            )}
           </Space>
         ),
       },
     ];
-  }, []);
+  }, [onAssignDriver, onCancelBooking, onCancelOrder]);
 
   return (
     <Table
@@ -278,14 +359,20 @@ export const TableBookings: React.FC<IProps> = ({
       loading={isLoading}
       pagination={{
         position: ["bottomCenter"],
-        defaultPageSize: 50,
+        defaultPageSize: 10,
         showSizeChanger: true,
         pageSizeOptions: [10, 25, 50],
         style: { marginBottom: 0 },
-        showTotal: (total) => <TableTotal count={total} />,
+        total: pagination.total,
+        current: pagination.page,
+        pageSize: pagination.limit,
+        onChange(page, pageSize) {
+          loadData(page, pageSize);
+        },
+        showTotal: (total) => <TableTotal tabKey={tabKey} count={total} />,
       }}
       locale={{
-        emptyText: <TableEmpty tabKey={tabKey} isLoading={isLoading} />,
+        emptyText: <TableEmpty tabKey={tabKey} />,
       }}
     />
   );

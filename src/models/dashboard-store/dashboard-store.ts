@@ -3,8 +3,8 @@ import { cast, flow, Instance, SnapshotOut, types } from "mobx-state-tree";
 
 import { withEnvironment } from "@/models/extensions";
 import {
-  RequestGetActiveDriverResponse,
-  RequestGetActiveTruckResponse,
+  RequestGetActiveDriverResult,
+  RequestGetActiveTruckResult,
   RequestGetTotalBookingResult,
 } from "@/services/api/operator/dashboard-api/type";
 
@@ -76,6 +76,7 @@ export const DashboardModel = types
     totalBooking: types.optional(TotalBookingModel, {}),
     activeDriver: types.optional(ActiveDriverModel, {}),
     activeTruck: types.optional(ActiveTruckModel, {}),
+    // historyBooking: types.optional(TotalBookingModel, {}),
   })
   .views((self) => {
     const views = {
@@ -176,7 +177,7 @@ export const DashboardModel = types
       }
     }),
     getActiveDriver: flow(function* () {
-      const result: RequestGetActiveDriverResponse =
+      const result: RequestGetActiveDriverResult =
         yield self.operatorDashboardApi.getActiveDriver();
 
       if (result.kind === "ok") {
@@ -184,12 +185,30 @@ export const DashboardModel = types
       }
     }),
     getActiveTruck: flow(function* () {
-      const result: RequestGetActiveTruckResponse =
+      const result: RequestGetActiveTruckResult =
         yield self.operatorDashboardApi.getActiveTruck();
 
       if (result.kind === "ok") {
         self.activeTruck = cast(result.result);
       }
+    }),
+    getBookingHistory: flow(function* ({
+      startDate,
+      endDate,
+    }: {
+      startDate: string;
+      endDate: string;
+    }) {
+      const result: RequestGetTotalBookingResult =
+        yield self.operatorDashboardApi.getBookingHistory({
+          startDate,
+          endDate,
+        });
+
+      // if (result.kind === "ok") {
+      //   self.activeTruck = cast(result.result);
+      // }
+      return result;
     }),
   }));
 

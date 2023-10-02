@@ -19,10 +19,17 @@ const routes = {
 };
 
 export const OperatorBookingApi = {
-  async getBookings(): Promise<Types.RequestBookingsResult> {
+  async getBookings({
+    page = 1,
+    limit = 10,
+  }: {
+    page: number;
+    limit: number;
+  }): Promise<Types.RequestBookingsResult> {
     const url = routes.index();
     const result: ApiResponse<Types.RequestBookingsResponse> = await api.get(
-      url
+      url,
+      { page, limit }
     );
     return returnResponse(result);
   },

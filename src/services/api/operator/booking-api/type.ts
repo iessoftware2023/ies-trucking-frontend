@@ -1,4 +1,4 @@
-import { IBooking } from "@/models/operator";
+import { IBooking, IBookingPagination } from "@/models/operator";
 
 import { GeneralApiProblem } from "../../api-problem";
 import { Response } from "../../type";
@@ -116,7 +116,10 @@ export interface IRequestBooking {
 
 export type RequestBookingResult = Response<IBooking>;
 
-export type RequestBookingsResponse = IBooking[];
+export type RequestBookingsResponse = {
+  data: IBooking[];
+  pagination: IBookingPagination;
+};
 
 export type RequestBookingsResult = Response<RequestBookingsResponse>;
 

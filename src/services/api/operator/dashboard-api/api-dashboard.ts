@@ -1,11 +1,5 @@
 import { ApiResponse, ApisauceInstance } from "apisauce";
 
-import {
-  IActiveDriver,
-  IActiveTruck,
-  ITotalBooking,
-} from "@/models/dashboard-store";
-
 import { Api } from "../../api-core";
 import { returnResponse } from "../../api-utilities";
 import * as Types from "./type";
@@ -16,24 +10,43 @@ const api: ApisauceInstance = Api.getInstance();
 
 const routes = {
   totalBooking: () => `${prefix}/total-booking`,
-  activeTruck: () => `${prefix}/active-truck`,
-  activeDriver: () => `${prefix}/active-driver`,
+  activeTruck: () => `${prefix}/truck/summary`,
+  activeDriver: () => `${prefix}/driver/summary`,
+  bookingHistory: () => `${prefix}/booking-history`,
 };
 
 export const OperatorDashboardApi = {
   async getTotalBooking(): Promise<Types.RequestGetTotalBookingResult> {
     const url = routes.totalBooking();
-    const result: ApiResponse<ITotalBooking> = await api.get(url);
+    const result: ApiResponse<Types.RequestGetTotalBookingResponse> =
+      await api.get(url);
     return returnResponse(result);
   },
   async getActiveTruck(): Promise<Types.RequestGetActiveTruckResult> {
     const url = routes.activeTruck();
-    const result: ApiResponse<IActiveTruck> = await api.get(url);
+    const result: ApiResponse<Types.RequestGetActiveTruckResponse> =
+      await api.get(url);
     return returnResponse(result);
   },
   async getActiveDriver(): Promise<Types.RequestGetActiveDriverResult> {
     const url = routes.activeDriver();
-    const result: ApiResponse<IActiveDriver> = await api.get(url);
+    const result: ApiResponse<Types.RequestGetActiveDriverResponse> =
+      await api.get(url);
+    return returnResponse(result);
+  },
+  async getBookingHistory({
+    startDate,
+    endDate,
+  }: {
+    startDate: string;
+    endDate: string;
+  }): Promise<Types.RequestGetBookingHistoryResult> {
+    const url = routes.bookingHistory();
+    const result: ApiResponse<Types.RequestGetBookingHistoryResponse> =
+      await api.get(url, {
+        startDate,
+        endDate,
+      });
     return returnResponse(result);
   },
 };

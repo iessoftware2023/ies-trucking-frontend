@@ -1,8 +1,13 @@
 import { parsePhoneNumber } from "libphonenumber-js";
 
-import { IBooking, IOrder } from "@/models/operator";
+import {
+  IBooking,
+  IBookingStatus,
+  IOrder,
+  IOrderStatus,
+} from "@/models/operator";
 
-import { ITableRow } from ".";
+import { ITableRow } from "./index-1";
 
 export const convertBookingsToTable = (bookings: IBooking[]): ITableRow[] => {
   return bookings.map((booking) => {
@@ -96,4 +101,29 @@ export const getOrderSearchField = (order: IOrder) => {
   ];
 
   return arr.join("|");
+};
+
+export const checkCanAssignDriver = (
+  bookingStatus: IBookingStatus,
+  orderStatus: IOrderStatus
+) => {
+  if (bookingStatus === "pending") {
+    return true;
+  }
+
+  if (bookingStatus === "confirmed") {
+    return orderStatus === "order_placed";
+  }
+
+  return false;
+};
+
+export const checkCanCancelBooking = (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _bookingStatus: IBookingStatus,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _orderStatus: IOrderStatus
+) => {
+  return true;
+  // return checkCanAssignDriver(bookingStatus, orderStatus);
 };

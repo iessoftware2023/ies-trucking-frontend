@@ -34,6 +34,8 @@
     "dayjs": "^1.11.8",
     "eslint": "8.34.0",
     "eslint-config-next": "13.1.6",
+    "highcharts": "^11.1.0",
+    "highcharts-react-official": "^3.2.1",
     "libphonenumber-js": "^1.10.36",
     "lodash": "^4.17.21",
     "lottie-react": "^2.4.0",

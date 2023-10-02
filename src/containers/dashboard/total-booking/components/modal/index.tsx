@@ -1,17 +1,14 @@
-import { Modal, Spin } from "antd";
-import React from "react";
+import { Modal } from "antd";
+import React, { useMemo } from "react";
 
 // import { TableBookings } from "@/containers/booking-list/components";
-import { IOrder } from "@/models/operator";
-
 import { SideBar } from "../sidebar";
-import { TableBookings } from "../table-bookings";
+import { ITableRow, TableBookings } from "../table-bookings";
 
 interface IProps {
   isModalOpen: boolean;
   handleOk: () => void;
   handleCancel: () => void;
-  data: IOrder[];
   statuses: {
     title: string;
     color: string;
@@ -21,18 +18,48 @@ interface IProps {
   onChangeTabKey: (tabKey) => void;
   tabKey: string;
   isLoading: boolean;
+  pagination: {
+    total: number;
+    limit: number;
+    page: number;
+    pages: number;
+  };
+  loadData: (page: number, limit: number) => void;
+  tableData: ITableRow[];
+
+  onAssignDriver: (bookingId: string, driverId: string) => Promise<boolean>;
+  onCancelBooking: (bookingId: string, code: string) => Promise<boolean>;
+  onCancelOrder: (orderId: string, code: string) => Promise<boolean>;
 }
 
 export const TotalBookingModal: React.FC<IProps> = ({
   isModalOpen,
   handleCancel,
   handleOk,
-  data,
+  tableData,
   statuses,
-  tabKey,
+  // tabKey,
   onChangeTabKey,
+  loadData,
   isLoading,
+  pagination,
+  ...props
 }) => {
+  const tabKey = useMemo(() => {
+    switch (props.tabKey) {
+      case "order_placed":
+      case "on_the_way_to_pickup":
+      case "order_pickup":
+      case "on_the_way_to_dropoff":
+        return "ON_GOING";
+      case "cancelled":
+      case "completed":
+        return "HISTORY";
+      default:
+        return "WAITING_ASSIGN";
+    }
+  }, [props.tabKey]);
+
   return (
     <Modal
       title="Booking List"
@@ -44,11 +71,21 @@ export const TotalBookingModal: React.FC<IProps> = ({
       <div className="relative grid grid-cols-[250px_1fr]">
         <SideBar
           statuses={statuses}
-          tabKey={tabKey}
+          tabKey={props.tabKey}
           onChange={onChangeTabKey}
         />
         <div className="min-h-[500px] overflow-hidden">
-          <TableBookings data={data} isLoading={isLoading} tabKey={tabKey} />
+          <TableBookings
+            tabKey={tabKey}
+            data={tableData}
+            isLoading={isLoading}
+            pagination={pagination}
+            loadData={loadData}
+            //
+            onAssignDriver={props.onAssignDriver}
+            onCancelBooking={props.onCancelBooking}
+            onCancelOrder={props.onCancelOrder}
+          />
         </div>
       </div>
     </Modal>
