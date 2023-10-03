@@ -67,6 +67,7 @@ export const TotalBookingModal: React.FC<IProps> = ({
       onOk={handleOk}
       onCancel={handleCancel}
       width="90%"
+      style={{ top: 32, bottom: 32 }}
     >
       <div className="relative grid grid-cols-[250px_1fr]">
         <SideBar

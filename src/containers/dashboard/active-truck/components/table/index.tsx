@@ -6,11 +6,9 @@ import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
+import { toJS } from "mobx";
 import Link from "next/link";
 import React, { useMemo } from "react";
-
-import { IDriver } from "@/containers/booking-list/types";
-import { IBookingStatus, IOrderStatus } from "@/models/operator";
 
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
@@ -67,29 +65,13 @@ const TableEmpty: React.FC<{ tabKey: string }> = ({ tabKey }) => {
 
 export interface ITableRow {
   id: string;
-  bookingId: string;
-  orderId: string;
-  code: string;
-  status: {
-    bookingStatus: IBookingStatus;
-    orderStatus: IOrderStatus;
-  };
-  driver: IDriver;
-  drivers: IDriver[];
-  pickUpLocation: string;
-  pickUpTime: string;
-  deliveryLocation: string;
-  deliveryTime: string;
-  typeOfTruck: string;
-  customer: {
+  licensePlate: string;
+  truckType: {
     name: string;
-    phone: string;
+    cargoTypes: {
+      name: string;
+    }[];
   };
-  total: {
-    cost: number;
-    currency: string;
-  };
-  typeOfDeliveryItem: string[];
 }
 
 export type IDriverStatus =
@@ -103,20 +85,33 @@ type IProps = {
   status: string;
   data: ITableRow[];
   isLoading?: boolean;
+  pagination: {
+    total: number;
+    limit: number;
+    page: number;
+    pages: number;
+  };
+  loadData: (page: number, pageSize: number) => void;
 };
 
 export const TableActiveTrucks: React.FC<IProps> = ({
   status,
   data = [],
   isLoading,
+  pagination,
+  loadData,
 }) => {
+  console.log(
+    "📢 data",
+    data.map((d) => toJS(d))
+  );
   const columns = useMemo<ColumnsType<ITableRow>>(() => {
     return [
       {
         title: "ID",
         dataIndex: "licensePlate",
         key: "licensePlate",
-        width: 160,
+        width: 80,
         align: "center",
         fixed: "left",
         render: (text) => (
@@ -127,35 +122,37 @@ export const TableActiveTrucks: React.FC<IProps> = ({
       },
       {
         title: "Type of truck",
-        dataIndex: "typeOfTruck",
-        key: "typeOfTruck",
-        width: 256,
-        render: (text) => (
+        dataIndex: "truckType",
+        key: "truckType",
+        width: 160,
+        render: (_, record) => (
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={encodeURI(`/icons/truck-types/png/${text}.png`)}
+              src={encodeURI(
+                `/icons/truck-types/png/${record.truckType.name}.png`
+              )}
               alt=""
               className="mb-0.5 h-3"
             />
-            <span>{text}</span>
+            <span>{record.truckType.name}</span>
           </div>
         ),
       },
       {
         title: "Type of delivery Item",
-        dataIndex: "typeOfDeliveryItem",
-        key: "typeOfDeliveryItem",
-        width: 256,
-        render(value) {
+        dataIndex: "truckType",
+        key: "truckType",
+        width: 250,
+        render(truckType: ITableRow["truckType"]) {
           return (
-            <div className="flex flex-col gap-1">
-              {value.map((d) => (
+            <div className="flex flex-row flex-wrap gap-1">
+              {truckType.cargoTypes.map((cargoType) => (
                 <div
-                  key={d}
-                  className="rounded bg-blue-50 px-2 py-1 text-sm text-blue-500"
+                  key={cargoType.name}
+                  className="rounded bg-[#EFF0F4] px-2 py-1 text-sm text-[#5F6C91]"
                 >
-                  {d}
+                  {cargoType.name}
                 </div>
               ))}
             </div>
@@ -166,12 +163,12 @@ export const TableActiveTrucks: React.FC<IProps> = ({
         title: "Action",
         key: "action",
         fixed: "right",
-        width: 128,
+        width: 40,
         align: "center",
         render: (_, record) => (
           <Space size="middle">
             <Link
-              href={`/booking/${record.bookingId}`}
+              href={`/booking/${record.id}`}
               className="text-blue-500 underline"
             >
               Detail
@@ -187,7 +184,7 @@ export const TableActiveTrucks: React.FC<IProps> = ({
       rowKey="id"
       columns={columns}
       dataSource={data}
-      scroll={{ x: 1600, y: "calc(100vh - 288px)" }}
+      scroll={{ x: 1200, y: "calc(100vh - 288px)" }}
       bordered
       loading={isLoading}
       pagination={{
@@ -196,6 +193,12 @@ export const TableActiveTrucks: React.FC<IProps> = ({
         showSizeChanger: true,
         pageSizeOptions: [10, 25, 50],
         style: { marginBottom: 0 },
+        total: pagination.total,
+        current: pagination.page,
+        pageSize: pagination.limit,
+        onChange(page, pageSize) {
+          loadData(page, pageSize);
+        },
         showTotal: (total) => <TableTotal count={total} />,
       }}
       locale={{

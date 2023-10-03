@@ -6,11 +6,12 @@ import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
+import { toJS } from "mobx";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import React, { useMemo } from "react";
 
-import { IDriver } from "@/containers/booking-list/types";
-import { IBookingStatus, IOrderStatus } from "@/models/operator";
+import { phoneFormat } from "@/utils/string";
 
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
@@ -67,140 +68,116 @@ const TableEmpty: React.FC<{ tabKey: string }> = ({ tabKey }) => {
 
 export interface ITableRow {
   id: string;
-  bookingId: string;
-  orderId: string;
-  code: string;
-  status: {
-    bookingStatus: IBookingStatus;
-    orderStatus: IOrderStatus;
-  };
-  driver: IDriver;
-  drivers: IDriver[];
-  pickUpLocation: string;
-  pickUpTime: string;
-  deliveryLocation: string;
-  deliveryTime: string;
-  typeOfTruck: string;
-  customer: {
+  name: string;
+  phoneNumber: string;
+  truckType?: {
     name: string;
-    phone: string;
   };
-  total: {
-    cost: number;
-    currency: string;
-  };
-  typeOfDeliveryItem: string[];
 }
-
-export type IDriverStatus =
-  | "all"
-  | "on_the_way_to_pickup"
-  | "order_pickup"
-  | "on_the_way_to_dropoff"
-  | "inactive";
 
 type IProps = {
   status: string;
   data: ITableRow[];
   isLoading?: boolean;
+  pagination: {
+    total: number;
+    limit: number;
+    page: number;
+    pages: number;
+  };
+  loadData: (page: number, pageSize: number) => void;
 };
 
-export const TableActiveDrivers: React.FC<IProps> = ({
-  status,
-  data = [],
-  isLoading,
-}) => {
-  const columns = useMemo<ColumnsType<ITableRow>>(() => {
-    return [
-      {
-        title: "ID",
-        dataIndex: "licensePlate",
-        key: "licensePlate",
-        width: 160,
-        align: "center",
-        fixed: "left",
-        render: (text) => (
-          <div className="flex flex-col">
-            <span className="font-semibold">{text}</span>
-          </div>
-        ),
-      },
-      {
-        title: "Type of truck",
-        dataIndex: "typeOfTruck",
-        key: "typeOfTruck",
-        width: 256,
-        render: (text) => (
-          <div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={encodeURI(`/icons/truck-types/png/${text}.png`)}
-              alt=""
-              className="mb-0.5 h-3"
-            />
-            <span>{text}</span>
-          </div>
-        ),
-      },
-      {
-        title: "Type of delivery Item",
-        dataIndex: "typeOfDeliveryItem",
-        key: "typeOfDeliveryItem",
-        width: 256,
-        render(value) {
-          return (
-            <div className="flex flex-col gap-1">
-              {value.map((d) => (
-                <div
-                  key={d}
-                  className="rounded bg-blue-50 px-2 py-1 text-sm text-blue-500"
-                >
-                  {d}
-                </div>
-              ))}
+export const TableActiveDrivers: React.FC<IProps> = observer(
+  ({ status, data, isLoading, pagination, loadData }) => {
+    console.log("📢 data", toJS(data));
+    const columns = useMemo<ColumnsType<ITableRow>>(() => {
+      return [
+        {
+          title: "Driver",
+          dataIndex: "name",
+          key: "name",
+          width: 160,
+          align: "center",
+          fixed: "left",
+          render: (text) => (
+            <div className="flex flex-col">
+              <span className="font-semibold">{text}</span>
             </div>
-          );
+          ),
         },
-      },
-      {
-        title: "Action",
-        key: "action",
-        fixed: "right",
-        width: 128,
-        align: "center",
-        render: (_, record) => (
-          <Space size="middle">
-            <Link
-              href={`/booking/${record.bookingId}`}
-              className="text-blue-500 underline"
-            >
-              Detail
-            </Link>
-          </Space>
-        ),
-      },
-    ];
-  }, []);
+        {
+          title: "Phone Number",
+          dataIndex: "phoneNumber",
+          key: "phoneNumber",
+          width: 256,
+          render: (text) => <span>{phoneFormat(text)}</span>,
+        },
+        {
+          title: "Type of Truck",
+          dataIndex: "truckType",
+          key: "truckType",
+          width: 256,
+          render: (_, record) => (
+            <div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={encodeURI(
+                  `/icons/truck-types/png/${record.truckType?.name}.png`
+                )}
+                alt=""
+                className="mb-0.5 h-3"
+              />
+              <span>{record.truckType?.name}</span>
+            </div>
+          ),
+        },
+        {
+          title: "Action",
+          key: "action",
+          fixed: "right",
+          width: 128,
+          align: "center",
+          render: (_, record) => (
+            <Space size="middle">
+              <Link
+                href={`/booking/${record.id}`}
+                className="text-blue-500 underline"
+              >
+                Detail
+              </Link>
+            </Space>
+          ),
+        },
+      ];
+    }, []);
 
-  return (
-    <Table
-      rowKey="id"
-      columns={columns}
-      dataSource={data}
-      scroll={{ x: 1600, y: "calc(100vh - 288px)" }}
-      bordered
-      loading={isLoading}
-      pagination={{
-        position: ["bottomCenter"],
-        defaultPageSize: 50,
-        showSizeChanger: true,
-        pageSizeOptions: [10, 25, 50],
-        style: { marginBottom: 0 },
-        showTotal: (total) => <TableTotal count={total} />,
-      }}
-      locale={{
-        emptyText: <TableEmpty tabKey={status} />,
-      }}
-    />
-  );
-};
+    return (
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={data}
+        scroll={{ x: 1600, y: "calc(100vh - 288px)" }}
+        bordered
+        loading={isLoading}
+        pagination={{
+          position: ["bottomCenter"],
+          defaultPageSize: 10,
+          showSizeChanger: true,
+          pageSizeOptions: [10, 25, 50],
+          style: { marginBottom: 0 },
+          total: pagination.total,
+          current: pagination.page,
+          pageSize: pagination.limit,
+          onChange(page, pageSize) {
+            loadData(page, pageSize);
+          },
+          showTotal: (total) => <TableTotal count={total} />,
+        }}
+        locale={{
+          emptyText: <TableEmpty tabKey={status} />,
+        }}
+      />
+    );
+  }
+);

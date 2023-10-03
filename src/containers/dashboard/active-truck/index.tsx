@@ -5,16 +5,15 @@ import _JSXStyle from "styled-jsx/style";
 import { REFRESH_DATA_INTERVAL } from "@/containers/booking-list/constants";
 import { useInterval } from "@/hooks";
 import { useStores } from "@/models";
-import { IActiveTruck } from "@/models/dashboard-store";
 
 import { ActiveTruckDashboard, ListActiveTruckModal } from "./components";
+import { IActiveTruckStatus } from "./types";
 
 export const ActiveTruck = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tabKey, setTabKey] = useState<string>("all");
+  const [tabKey, setTabKey] = useState<IActiveTruckStatus>("all");
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(false);
-  const [data, setData] = useState<IActiveTruck[]>([]);
   const { dashboardStore } = useStores();
 
   useInterval(async () => {
@@ -23,6 +22,41 @@ export const ActiveTruck = () => {
     setIsLoadingDashboard(false);
   }, REFRESH_DATA_INTERVAL);
 
+  const fetchData = useCallback(
+    async (isRefresh: boolean) => {
+      setIsLoadingData(true);
+      await dashboardStore.getTruckList({
+        page: isRefresh ? dashboardStore.activeTruck.pagination.page : 1,
+        limit: isRefresh ? dashboardStore.activeTruck.pagination.limit : 10,
+        status: tabKey === "all" ? undefined : tabKey,
+      });
+      setIsLoadingData(false);
+    },
+    [dashboardStore, tabKey]
+  );
+
+  useInterval(
+    (isRefresh: boolean) => {
+      if (!isModalOpen) return;
+      fetchData(isRefresh);
+    },
+    REFRESH_DATA_INTERVAL,
+    [tabKey, isModalOpen]
+  );
+
+  const loadData = useCallback(
+    async (page: number, limit: number) => {
+      setIsLoadingData(true);
+      await dashboardStore.getTruckList({
+        page: page,
+        limit: limit,
+        status: tabKey === "all" ? undefined : tabKey,
+      });
+      setIsLoadingData(false);
+    },
+    [dashboardStore, tabKey]
+  );
+
   const changeIsModalOpen = useCallback(
     (isModalOpen: boolean) => () => {
       setIsModalOpen(isModalOpen);
@@ -30,10 +64,12 @@ export const ActiveTruck = () => {
     []
   );
 
-  const handleChangeTabKey = (tabKey: string) => {
+  const handleChangeTabKey = (tabKey: IActiveTruckStatus) => {
     if (isLoadingData) return;
     setTabKey(tabKey);
   };
+
+  console.log("📢 isLoadingData", isLoadingData);
 
   return (
     <>
@@ -54,19 +90,22 @@ export const ActiveTruck = () => {
       >
         <ActiveTruckDashboard
           analytics={dashboardStore.activeTruckAnalytics}
-          total={dashboardStore.activeTruck.total}
-          totalActive={dashboardStore.activeTruck.totalActive}
+          total={dashboardStore.activeTruck.summary.total}
+          totalActive={dashboardStore.activeTruck.summary.totalActive}
           openModal={changeIsModalOpen(true)}
         />
       </Spin>
       <ListActiveTruckModal
-        data={[]}
+        data={dashboardStore.activeTruck.trucksView}
         statuses={dashboardStore.activeTruckStatuses}
         statusKey={tabKey}
-        handleOk={changeIsModalOpen(true)}
+        handleOk={changeIsModalOpen(false)}
         handleCancel={changeIsModalOpen(false)}
         onChangeTabKey={handleChangeTabKey}
         isModalOpen={isModalOpen}
+        isLoading={isLoadingData}
+        loadData={loadData}
+        pagination={dashboardStore.activeTruck.pagination}
       />
     </>
   );

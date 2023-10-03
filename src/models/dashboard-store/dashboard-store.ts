@@ -3,8 +3,10 @@ import { cast, flow, Instance, SnapshotOut, types } from "mobx-state-tree";
 
 import { withEnvironment } from "@/models/extensions";
 import {
+  IDriveStatus,
   RequestGetActiveDriverResult,
   RequestGetActiveTruckResult,
+  RequestGetDriverListResult,
   RequestGetTotalBookingResult,
 } from "@/services/api/operator/dashboard-api/type";
 
@@ -121,8 +123,9 @@ export const DashboardModel = types
           return {
             ...item,
             count:
-              self.activeTruck.data.find((d) => d.status === item.status)
-                ?.count ?? 0,
+              self.activeTruck.summary.data.find(
+                (d) => d.status === item.status
+              )?.count ?? 0,
           };
         });
       },
@@ -132,7 +135,7 @@ export const DashboardModel = types
             title: "All",
             status: "all",
             color: "#FFD495",
-            count: self.activeTruck.total,
+            count: self.activeTruck.summary.total,
           },
           ...views.activeTruckAnalytics,
         ];
@@ -147,8 +150,9 @@ export const DashboardModel = types
           return {
             ...item,
             count:
-              self.activeDriver.data.find((d) => d.status === item.status)
-                ?.count ?? 0,
+              self.activeDriver.summary.data.find(
+                (d) => d.status === item.status
+              )?.count ?? 0,
           };
         });
       },
@@ -158,7 +162,7 @@ export const DashboardModel = types
             title: "All",
             status: "all",
             color: "#FFD495",
-            count: self.activeDriver.total,
+            count: self.activeDriver.summary.total,
           },
           ...views.activeDriverAnalytics,
         ];
@@ -181,15 +185,56 @@ export const DashboardModel = types
         yield self.operatorDashboardApi.getActiveDriver();
 
       if (result.kind === "ok") {
-        self.activeDriver = cast(result.result);
+        self.activeDriver.summary = cast(result.result);
       }
+    }),
+    getDriverList: flow(function* ({
+      page = 1,
+      limit = 10,
+      status,
+    }: {
+      page: number;
+      limit: number;
+      status?: IDriveStatus;
+    }) {
+      const result: RequestGetDriverListResult =
+        yield self.operatorDashboardApi.getDriverList({ page, limit, status });
+
+      if (result.kind === "ok") {
+        self.activeDriver.data.clear();
+        result.result.data.forEach((driver) => {
+          self.activeDriver.data.set(driver.id.toString(), cast(driver));
+        });
+        self.activeDriver.pagination = cast(result.result.pagination);
+      }
+      return result;
     }),
     getActiveTruck: flow(function* () {
       const result: RequestGetActiveTruckResult =
         yield self.operatorDashboardApi.getActiveTruck();
 
       if (result.kind === "ok") {
-        self.activeTruck = cast(result.result);
+        self.activeTruck.summary = cast(result.result);
+      }
+    }),
+    getTruckList: flow(function* ({
+      page = 1,
+      limit = 10,
+      status,
+    }: {
+      page: number;
+      limit: number;
+      status?: IDriveStatus;
+    }) {
+      const result: RequestGetDriverListResult =
+        yield self.operatorDashboardApi.getTruckList({ page, limit, status });
+
+      if (result.kind === "ok") {
+        self.activeTruck.data.clear();
+        result.result.data.forEach((truck) => {
+          self.activeTruck.data.set(truck.id.toString(), cast(truck));
+        });
+        self.activeTruck.pagination = cast(result.result.pagination);
       }
     }),
     getBookingHistory: flow(function* ({
