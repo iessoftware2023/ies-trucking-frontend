@@ -1,9 +1,9 @@
 import { Spin } from "antd";
 import classNames from "classnames";
 import dayjs from "dayjs";
-import Image from "next/image";
-import bookingHistoryChart from "public/images/booking-history-chart.png";
-import React, { useCallback, useState } from "react";
+import * as Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 
 import { REFRESH_DATA_INTERVAL } from "@/containers/booking-list/constants";
 import { useInterval } from "@/hooks";
@@ -32,6 +32,8 @@ const rangeDates: {
 ];
 
 export const BookingHistory = () => {
+  const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
+
   const [day, setDay] = useState(rangeDates[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [date, setDate] = useState({
@@ -50,14 +52,103 @@ export const BookingHistory = () => {
       setDay(day);
       setDate({
         startDate: dayjs()
-          .subtract(day.value, "day")
-          .startOf("day")
+          .subtract(day.value, "days")
+          .startOf("days")
           .toISOString(),
-        endDate: dayjs().endOf("day").toISOString(),
+        endDate: dayjs().endOf("days").toISOString(),
       });
     },
     [isLoading]
   );
+
+  const bookingHistoryView = dashboardStore.bookingHistoryView(
+    date.startDate,
+    date.endDate
+  );
+
+  const options: Highcharts.Options = useMemo(() => {
+    return {
+      chart: {
+        borderWidth: 0,
+        borderRadius: 100,
+        zooming: {
+          type: "x",
+        },
+      },
+      time: {
+        useUTC: false,
+      },
+      xAxis: {
+        showEmpty: false,
+        type: "datetime",
+        // categories: bookingHistoryView.map((item) => item[0].toString()),
+        // labels: {
+        //   formatter: function () {
+        //     return dayjs(this.value).format("D/M/YYYY");
+        //   },
+        // },
+      },
+      legend: {
+        enabled: false,
+      },
+      tooltip: {
+        xDateFormat: "%d/%m/%Y %H:%M",
+        headerFormat: '<span style="font-size:12px">{point.key}</span><table>',
+        pointFormat:
+          '<tr><td style="">{series.name}: </td>' +
+          `<td style="padding:0"><b>{point.y} </b></td></tr>`,
+        footerFormat: "</table>",
+        shared: true,
+        useHTML: true,
+      },
+      plotOptions: {
+        series: {
+          pointStart: dayjs(date.startDate).valueOf(),
+          marker: {
+            enabled: false,
+          },
+        },
+        area: {
+          fillColor: {
+            linearGradient: {
+              x1: 0,
+              y1: 0,
+              x2: 0,
+              y2: 1,
+            },
+            stops: [
+              [0, "#a9ccfc"],
+              [1, "#f1f5fb"],
+            ],
+          },
+          marker: {
+            enabled: false,
+            radius: 2,
+            symbol: "circle",
+            states: {
+              hover: {
+                enabled: true,
+              },
+            },
+          },
+          lineWidth: 1,
+          states: {
+            hover: {
+              lineWidth: 1,
+            },
+          },
+          threshold: null,
+        },
+      },
+      series: [
+        {
+          type: "areaspline",
+          name: "Total Booking",
+          data: bookingHistoryView,
+        },
+      ],
+    };
+  }, [bookingHistoryView, date.startDate]);
 
   useInterval(
     async () => {
@@ -104,7 +195,11 @@ export const BookingHistory = () => {
       </div>
       <div className="h-0 self-stretch border border-stone-300" />
       <Spin spinning={isLoading}>
-        <Image src={bookingHistoryChart} alt="booking history chart" />
+        <HighchartsReact
+          highcharts={Highcharts}
+          options={options}
+          ref={chartComponentRef}
+        />
       </Spin>
     </div>
   );

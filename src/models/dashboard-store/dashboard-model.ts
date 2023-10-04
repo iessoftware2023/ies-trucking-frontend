@@ -1,5 +1,10 @@
 import { Instance, types } from "mobx-state-tree";
 
+export const BookingHistoryModel = types.model("BookingHistoryModel").props({
+  date: types.maybeNull(types.optional(types.string, "")),
+  total: types.maybeNull(types.optional(types.number, 0)),
+});
+
 export const TotalBookingModel = types.model("TotalBookingModel").props({
   total: types.maybeNull(types.optional(types.number, 0)),
   data: types.maybeNull(
@@ -123,3 +128,5 @@ export type ITruck = Instance<typeof TruckModel>;
 export type IActiveDriverSummary = Instance<typeof ActiveDriverSummaryModel>;
 export type IDriver = Instance<typeof DriverModel>;
 export type IPagination = Instance<typeof PaginationModel>;
+
+export type IBookingHistory = Instance<typeof BookingHistoryModel>;

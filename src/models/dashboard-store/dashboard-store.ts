@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { sumBy } from "lodash";
 import { cast, flow, Instance, SnapshotOut, types } from "mobx-state-tree";
 
@@ -6,6 +7,7 @@ import {
   IDriveStatus,
   RequestGetActiveDriverResult,
   RequestGetActiveTruckResult,
+  RequestGetBookingHistoryResult,
   RequestGetDriverListResult,
   RequestGetTotalBookingResult,
 } from "@/services/api/operator/dashboard-api/type";
@@ -13,6 +15,7 @@ import {
 import {
   ActiveDriverModel,
   ActiveTruckModel,
+  BookingHistoryModel,
   TotalBookingModel,
 } from "./dashboard-model";
 
@@ -78,7 +81,7 @@ export const DashboardModel = types
     totalBooking: types.optional(TotalBookingModel, {}),
     activeDriver: types.optional(ActiveDriverModel, {}),
     activeTruck: types.optional(ActiveTruckModel, {}),
-    // historyBooking: types.optional(TotalBookingModel, {}),
+    bookingHistory: types.optional(types.map(BookingHistoryModel), {}),
   })
   .views((self) => {
     const views = {
@@ -170,6 +173,19 @@ export const DashboardModel = types
     };
     return views;
   })
+  .views((self) => ({
+    bookingHistoryView(startDate: string, endDate: string) {
+      console.log("📢 startDate", startDate);
+      const diffDate = dayjs(endDate).diff(dayjs(startDate), "day");
+      return Array.from({ length: diffDate + 1 }).map((_, index) => {
+        const dayValue = dayjs(startDate).add(index, "day").valueOf();
+        return [
+          dayValue,
+          self.bookingHistory.get(dayValue.toString())?.total ?? 0,
+        ];
+      });
+    },
+  }))
   .extend(withEnvironment)
   .actions((self) => ({
     getTotalBooking: flow(function* () {
@@ -244,15 +260,20 @@ export const DashboardModel = types
       startDate: string;
       endDate: string;
     }) {
-      const result: RequestGetTotalBookingResult =
+      const result: RequestGetBookingHistoryResult =
         yield self.operatorDashboardApi.getBookingHistory({
           startDate,
           endDate,
         });
 
-      // if (result.kind === "ok") {
-      //   self.activeTruck = cast(result.result);
-      // }
+      if (result.kind === "ok") {
+        result.result.forEach((bookingHistory) => {
+          self.bookingHistory.set(
+            new Date(bookingHistory.date).valueOf().toString(),
+            cast(bookingHistory)
+          );
+        });
+      }
       return result;
     }),
   }));

@@ -1,9 +1,11 @@
 import {
   IActiveDriverSummary,
-  IActiveTruck,
+  IActiveTruckSummary,
+  IBookingHistory,
   IDriver,
   IPagination,
   ITotalBooking,
+  ITruck,
 } from "@/models/dashboard-store";
 
 import { Response } from "../../type";
@@ -20,26 +22,21 @@ export type ITruckStatus =
   | "on_the_way_to_dropoff"
   | "inactive";
 
-export interface IBookingHistory {
-  date: string;
-  total: number;
-}
-
 export type RequestGetTotalBookingResponse = ITotalBooking;
 export type RequestGetTotalBookingResult =
   Response<RequestGetTotalBookingResponse>;
 
-export type RequestGetActiveTruckResponse = IActiveTruck;
+export type RequestGetActiveTruckResponse = IActiveTruckSummary;
 export type RequestGetActiveTruckResult =
   Response<RequestGetActiveTruckResponse>;
 
 export type RequestGetTruckListResponse = {
-  data: IActiveTruck[];
+  data: ITruck[];
   pagination: IPagination;
 };
 export type RequestGetTruckListResult = Response<RequestGetTruckListResponse>;
 
-export type RequestGetTruckItemResponse = IActiveTruck;
+export type RequestGetTruckItemResponse = ITruck;
 export type RequestGetTruckItemResult = Response<RequestGetTruckItemResponse>;
 
 export type RequestGetActiveDriverResponse = IActiveDriverSummary;
