@@ -21,6 +21,8 @@ const routes = {
   driverItem: (driverId: string) => `${prefix}/driver/${driverId}`,
   // history
   bookingHistory: () => `${prefix}/booking-history`,
+  // income
+  income: () => `${prefix}/total-income`,
 };
 
 export const OperatorDashboardApi = {
@@ -106,6 +108,13 @@ export const OperatorDashboardApi = {
         startDate,
         endDate,
       });
+    return returnResponse(result);
+  },
+  // income
+  async getTotalIncome(): Promise<Types.RequestGetTotalIncomeResult> {
+    const url = routes.income();
+    const result: ApiResponse<Types.RequestGetTotalIncomeResponse> =
+      await api.get(url);
     return returnResponse(result);
   },
 };

@@ -120,6 +120,19 @@ export const ActiveDriverModel = types
     },
   }));
 
+export const IncomeModel = types.model("IncomeModel").props({
+  revenueRatio: types.maybeNull(types.optional(types.number, 0)),
+  totalIncomeToday: types.maybeNull(
+    types.optional(
+      types.model({
+        total: types.maybeNull(types.optional(types.number, 0)),
+        currency: types.maybeNull(types.optional(types.string, "")),
+      }),
+      {}
+    )
+  ),
+});
+
 export type ITotalBooking = Instance<typeof TotalBookingModel>;
 
 export type IActiveTruckSummary = Instance<typeof ActiveTruckSummaryModel>;
@@ -130,3 +143,5 @@ export type IDriver = Instance<typeof DriverModel>;
 export type IPagination = Instance<typeof PaginationModel>;
 
 export type IBookingHistory = Instance<typeof BookingHistoryModel>;
+
+export type IIncome = Instance<typeof IncomeModel>;

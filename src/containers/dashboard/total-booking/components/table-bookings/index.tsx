@@ -307,6 +307,7 @@ export const TableBookings: React.FC<IProps> = ({
         render: (_, record) => (
           <Space size="middle">
             <Link
+              target="_blank"
               href={`/booking/${record.bookingId}`}
               className="text-blue-500 underline"
             >

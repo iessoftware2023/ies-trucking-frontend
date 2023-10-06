@@ -90,14 +90,13 @@ type IProps = {
 
 export const TableActiveDrivers: React.FC<IProps> = observer(
   ({ status, data, isLoading, pagination, loadData }) => {
-    console.log("📢 data", toJS(data));
     const columns = useMemo<ColumnsType<ITableRow>>(() => {
       return [
         {
           title: "Driver",
           dataIndex: "name",
           key: "name",
-          width: 160,
+          width: 100,
           align: "center",
           fixed: "left",
           render: (text) => (
@@ -110,7 +109,7 @@ export const TableActiveDrivers: React.FC<IProps> = observer(
           title: "Phone Number",
           dataIndex: "phoneNumber",
           key: "phoneNumber",
-          width: 256,
+          width: 100,
           render: (text) => <span>{phoneFormat(text)}</span>,
         },
         {
@@ -157,7 +156,7 @@ export const TableActiveDrivers: React.FC<IProps> = observer(
         rowKey="id"
         columns={columns}
         dataSource={data}
-        scroll={{ x: 1600, y: "calc(100vh - 288px)" }}
+        scroll={{ x: 800, y: "calc(100vh - 288px)" }}
         bordered
         loading={isLoading}
         pagination={{

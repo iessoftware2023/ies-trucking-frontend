@@ -184,7 +184,7 @@ export const TableActiveTrucks: React.FC<IProps> = ({
       rowKey="id"
       columns={columns}
       dataSource={data}
-      scroll={{ x: 1200, y: "calc(100vh - 288px)" }}
+      scroll={{ x: 500, y: "calc(100vh - 288px)" }}
       bordered
       loading={isLoading}
       pagination={{

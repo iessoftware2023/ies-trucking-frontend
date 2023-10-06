@@ -10,12 +10,14 @@ import {
   RequestGetBookingHistoryResult,
   RequestGetDriverListResult,
   RequestGetTotalBookingResult,
+  RequestGetTotalIncomeResult,
 } from "@/services/api/operator/dashboard-api/type";
 
 import {
   ActiveDriverModel,
   ActiveTruckModel,
   BookingHistoryModel,
+  IncomeModel,
   TotalBookingModel,
 } from "./dashboard-model";
 
@@ -82,6 +84,7 @@ export const DashboardModel = types
     activeDriver: types.optional(ActiveDriverModel, {}),
     activeTruck: types.optional(ActiveTruckModel, {}),
     bookingHistory: types.optional(types.map(BookingHistoryModel), {}),
+    income: types.optional(IncomeModel, {}),
   })
   .views((self) => {
     const views = {
@@ -175,7 +178,6 @@ export const DashboardModel = types
   })
   .views((self) => ({
     bookingHistoryView(startDate: string, endDate: string) {
-      console.log("📢 startDate", startDate);
       const diffDate = dayjs(endDate).diff(dayjs(startDate), "day");
       return Array.from({ length: diffDate + 1 }).map((_, index) => {
         const dayValue = dayjs(startDate).add(index, "day").valueOf();
@@ -273,6 +275,16 @@ export const DashboardModel = types
             cast(bookingHistory)
           );
         });
+      }
+      return result;
+    }),
+  }))
+  .actions((self) => ({
+    getTotalIncome: flow(function* () {
+      const result: RequestGetTotalIncomeResult =
+        yield self.operatorDashboardApi.getTotalIncome();
+      if (result.kind === "ok") {
+        self.income = cast(result.result);
       }
       return result;
     }),

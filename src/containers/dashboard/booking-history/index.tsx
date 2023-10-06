@@ -75,6 +75,9 @@ export const BookingHistory = () => {
           type: "x",
         },
       },
+      title: {
+        text: "",
+      },
       time: {
         useUTC: false,
       },
