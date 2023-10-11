@@ -13,7 +13,7 @@ const routes = {
   // truck
   activeTruck: () => `${prefix}/truck/summary`,
   truckList: () => `${prefix}/truck/list`,
-  truckItem: (truckId: string) => `${prefix}/truck/${truckId}`,
+  truckDetail: (truckId: string) => `${prefix}/truck/${truckId}`,
   truckGeoLocation: () => `${prefix}/truck/geo-location`,
   // Driver
   activeDriver: () => `${prefix}/driver/summary`,
@@ -39,13 +39,11 @@ export const OperatorDashboardApi = {
       await api.get(url);
     return returnResponse(result);
   },
-  async getTruckItem({
-    truckId,
-  }: {
-    truckId: string;
-  }): Promise<Types.RequestGetTruckItemResult> {
-    const url = routes.truckItem(truckId);
-    const result: ApiResponse<Types.RequestGetTruckItemResponse> =
+  async getTruckDetail(
+    truckId: string
+  ): Promise<Types.RequestGetTruckDetailResult> {
+    const url = routes.truckDetail(truckId);
+    const result: ApiResponse<Types.RequestGetTruckDetailResponse> =
       await api.get(url);
     return returnResponse(result);
   },

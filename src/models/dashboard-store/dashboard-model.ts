@@ -135,11 +135,19 @@ export const IncomeModel = types.model("IncomeModel").props({
 
 const TruckType = types.model("TruckType", {
   name: types.optional(types.string, ""),
-});
-
-const Truck = types.model("Truck", {
-  licensePlate: types.optional(types.string, ""),
-  truckType: types.optional(TruckType, {}),
+  weightLimit: types.maybeNull(types.number),
+  description: types.optional(types.string, ""),
+  length: types.maybeNull(types.number),
+  width: types.maybeNull(types.number),
+  height: types.maybeNull(types.number),
+  cargoTypes: types.optional(
+    types.array(
+      types.model({
+        name: types.optional(types.string, ""),
+      })
+    ),
+    []
+  ),
 });
 
 const Tracking = types.model("Tracking", {
@@ -199,6 +207,26 @@ const Order = types.model("Order", {
   ),
 });
 
+const Truck = types.model("Truck", {
+  licensePlate: types.optional(types.string, ""),
+  truckType: types.optional(TruckType, {}),
+  orders: types.optional(types.array(Order), []),
+  parking: types.optional(
+    types.model({
+      name: types.optional(types.string, ""),
+      address: types.optional(types.string, ""),
+      location: types.optional(
+        types.model({
+          type: types.optional(types.string, "Point"),
+          coordinates: types.optional(types.array(types.number), []),
+        }),
+        {}
+      ),
+    }),
+    {}
+  ),
+});
+
 const Driver = types.model("Driver", {
   name: types.optional(types.string, ""),
   phoneNumber: types.optional(types.string, ""),
@@ -229,6 +257,11 @@ export const DriverDetailModel = types.model("DriverDetailModel", {
   revenueData: types.optional(RevenueData, {}),
 });
 
+export const TruckDetailModel = types.model("TruckDetailModel", {
+  truck: types.optional(Truck, {}),
+  revenueData: types.optional(RevenueData, {}),
+});
+
 export type ITotalBooking = Instance<typeof TotalBookingModel>;
 
 export type IActiveTruckSummary = Instance<typeof ActiveTruckSummaryModel>;
@@ -243,3 +276,5 @@ export type IBookingHistory = Instance<typeof BookingHistoryModel>;
 export type IIncome = Instance<typeof IncomeModel>;
 
 export type IDriverDetail = Instance<typeof Driver>;
+
+export type ITruckDetail = Instance<typeof Truck>;

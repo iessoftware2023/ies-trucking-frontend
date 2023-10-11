@@ -8,6 +8,7 @@ import {
   IPagination,
   ITotalBooking,
   ITruck,
+  ITruckDetail,
 } from "@/models/dashboard-store";
 
 import { Response } from "../../type";
@@ -38,8 +39,9 @@ export type RequestGetTruckListResponse = {
 };
 export type RequestGetTruckListResult = Response<RequestGetTruckListResponse>;
 
-export type RequestGetTruckItemResponse = ITruck;
-export type RequestGetTruckItemResult = Response<RequestGetTruckItemResponse>;
+export type RequestGetTruckDetailResponse = ITruckDetail;
+export type RequestGetTruckDetailResult =
+  Response<RequestGetTruckDetailResponse>;
 
 export type RequestGetActiveDriverResponse = IActiveDriverSummary;
 export type RequestGetActiveDriverResult =

@@ -66,6 +66,7 @@ export const OperatorBookingStoreModel = types
         // @ts-ignore
         self.booking = result.result?.id;
       }
+      return result;
     }),
 
     assignDriver: flow(function* (bookingId: string, driverId: string) {

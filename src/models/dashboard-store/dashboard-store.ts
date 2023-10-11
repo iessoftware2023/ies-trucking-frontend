@@ -12,6 +12,7 @@ import {
   RequestGetDriverListResult,
   RequestGetTotalBookingResult,
   RequestGetTotalIncomeResult,
+  RequestGetTruckDetailResult,
 } from "@/services/api/operator/dashboard-api/type";
 
 import {
@@ -21,6 +22,7 @@ import {
   DriverDetailModel,
   IncomeModel,
   TotalBookingModel,
+  TruckDetailModel,
 } from "./dashboard-model";
 
 const bookingStatuses = [
@@ -89,6 +91,8 @@ export const DashboardModel = types
     income: types.optional(IncomeModel, {}),
     driverMaps: types.optional(types.map(DriverDetailModel), {}),
     currentDriverId: types.optional(types.string, ""),
+    truckMaps: types.optional(types.map(TruckDetailModel), {}),
+    currentTruckId: types.optional(types.string, ""),
   })
   .views((self) => {
     const views = {
@@ -195,6 +199,11 @@ export const DashboardModel = types
   .views((self) => ({
     get driverDetail() {
       return self.driverMaps.get(self.currentDriverId);
+    },
+  }))
+  .views((self) => ({
+    get truckDetail() {
+      return self.truckMaps.get(self.currentTruckId);
     },
   }))
   .extend(withEnvironment)
@@ -308,6 +317,20 @@ export const DashboardModel = types
       if (result.kind === "ok") {
         self.currentDriverId = id;
         self.driverMaps.set(id, cast(result.result));
+      }
+      return result;
+    }),
+  }))
+  .actions((self) => ({
+    setCurrentTruckId(id: string) {
+      self.currentTruckId = id;
+    },
+    getTruckDetail: flow(function* (id: string) {
+      const result: RequestGetTruckDetailResult =
+        yield self.operatorDashboardApi.getTruckDetail(id);
+      if (result.kind === "ok") {
+        self.currentTruckId = id;
+        self.truckMaps.set(id, cast(result.result));
       }
       return result;
     }),

@@ -168,7 +168,8 @@ export const TableActiveTrucks: React.FC<IProps> = ({
         render: (_, record) => (
           <Space size="middle">
             <Link
-              href={`/booking/${record.id}`}
+              target="_blank"
+              href={`/truck/${record.id}`}
               className="text-blue-500 underline"
             >
               Detail

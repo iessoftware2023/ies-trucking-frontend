@@ -57,7 +57,7 @@ export const DriverDetailContainer = observer(() => {
         />
         <div className="flex h-[500px] overflow-hidden rounded-xl">
           {driver.orders.length ? (
-            <TrackingMap driver={driver} />
+            <TrackingMap orders={driver.orders} />
           ) : (
             <MapEmpty
               title="No driver location"
