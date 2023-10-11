@@ -95,7 +95,7 @@ export const ActiveDriverSummaryModel = types
     ),
   });
 
-export const DriverModel = types.model("ActiveDriverModel").props({
+export const DriverModel = types.model("DriverModel").props({
   id: types.optional(types.string, ""),
   name: types.maybeNull(types.optional(types.string, "")),
   phoneNumber: types.maybeNull(types.optional(types.string, "")),
@@ -133,6 +133,102 @@ export const IncomeModel = types.model("IncomeModel").props({
   ),
 });
 
+const TruckType = types.model("TruckType", {
+  name: types.optional(types.string, ""),
+});
+
+const Truck = types.model("Truck", {
+  licensePlate: types.optional(types.string, ""),
+  truckType: types.optional(TruckType, {}),
+});
+
+const Tracking = types.model("Tracking", {
+  id: types.optional(types.string, ""),
+  code: types.optional(types.string, ""),
+  orderId: types.optional(types.string, ""),
+  current: types.optional(
+    types.model({
+      lat: types.maybeNull(types.number),
+      lng: types.maybeNull(types.number),
+    }),
+    {}
+  ),
+  polygons: types.optional(types.array(types.array(types.number)), []),
+  createdAt: types.optional(types.string, ""),
+  updatedAt: types.optional(types.string, ""),
+});
+
+const OrderStatus = types.enumeration("OrderStatus", [
+  "order_placed",
+  "on_the_way_to_pickup",
+  "order_pickup",
+  "on_the_way_to_dropoff",
+  "cancelled",
+  "completed",
+]);
+
+const Order = types.model("Order", {
+  status: types.optional(OrderStatus, "order_placed"),
+  tracking: types.optional(Tracking, {}),
+  booking: types.optional(
+    types.model({
+      pickup: types.optional(
+        types.model({
+          latitude: types.maybeNull(types.number),
+          longitude: types.maybeNull(types.number),
+          address: types.optional(types.string, ""),
+          fullName: types.optional(types.string, ""),
+          phoneNumber: types.optional(types.string, ""),
+          addressNote: types.optional(types.string, ""),
+        }),
+        {}
+      ),
+      dropoff: types.optional(
+        types.model({
+          latitude: types.maybeNull(types.number),
+          longitude: types.maybeNull(types.number),
+          address: types.optional(types.string, ""),
+          fullName: types.optional(types.string, ""),
+          phoneNumber: types.optional(types.string, ""),
+          addressNote: types.optional(types.string, ""),
+        }),
+        {}
+      ),
+    }),
+    {}
+  ),
+});
+
+const Driver = types.model("Driver", {
+  name: types.optional(types.string, ""),
+  phoneNumber: types.optional(types.string, ""),
+  enterprise: types.optional(
+    types.model({
+      name: types.optional(types.string, ""),
+      address: types.optional(types.string, ""),
+    }),
+    {}
+  ),
+  trucks: types.optional(types.array(Truck), []),
+  orders: types.optional(types.array(Order), []),
+});
+
+const RevenueData = types.model("RevenueData", {
+  revenueRatio: types.maybeNull(types.optional(types.number, 0)),
+  totalIncomeToday: types.optional(
+    types.model({
+      total: types.maybeNull(types.optional(types.number, 0)),
+      currency: types.optional(types.string, "UAD"),
+    }),
+    {}
+  ),
+});
+
+export const DriverDetailModel = types.model("DriverDetailModel", {
+  driver: types.optional(Driver, {}),
+  revenueData: types.optional(RevenueData, {}),
+});
+
 export type ITotalBooking = Instance<typeof TotalBookingModel>;
 
 export type IActiveTruckSummary = Instance<typeof ActiveTruckSummaryModel>;
@@ -145,3 +241,5 @@ export type IPagination = Instance<typeof PaginationModel>;
 export type IBookingHistory = Instance<typeof BookingHistoryModel>;
 
 export type IIncome = Instance<typeof IncomeModel>;
+
+export type IDriverDetail = Instance<typeof Driver>;

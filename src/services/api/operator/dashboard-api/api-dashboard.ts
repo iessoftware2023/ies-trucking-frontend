@@ -18,7 +18,7 @@ const routes = {
   // Driver
   activeDriver: () => `${prefix}/driver/summary`,
   driverList: () => `${prefix}/driver/list`,
-  driverItem: (driverId: string) => `${prefix}/driver/${driverId}`,
+  driverDetail: (driverId: string) => `${prefix}/driver/${driverId}`,
   // history
   bookingHistory: () => `${prefix}/booking-history`,
   // income
@@ -84,13 +84,11 @@ export const OperatorDashboardApi = {
       await api.get(url, { page, limit, status });
     return returnResponse(result);
   },
-  async getDriverItem({
-    driverId,
-  }: {
-    driverId: string;
-  }): Promise<Types.RequestGetDriverItemResult> {
-    const url = routes.driverItem(driverId);
-    const result: ApiResponse<Types.RequestGetDriverItemResponse> =
+  async getDriverDetail(
+    driverId: string
+  ): Promise<Types.RequestGetDriverDetailResult> {
+    const url = routes.driverDetail(driverId);
+    const result: ApiResponse<Types.RequestGetDriverDetailResponse> =
       await api.get(url);
     return returnResponse(result);
   },

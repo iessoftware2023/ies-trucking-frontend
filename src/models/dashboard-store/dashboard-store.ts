@@ -8,6 +8,7 @@ import {
   RequestGetActiveDriverResult,
   RequestGetActiveTruckResult,
   RequestGetBookingHistoryResult,
+  RequestGetDriverDetailResult,
   RequestGetDriverListResult,
   RequestGetTotalBookingResult,
   RequestGetTotalIncomeResult,
@@ -17,6 +18,7 @@ import {
   ActiveDriverModel,
   ActiveTruckModel,
   BookingHistoryModel,
+  DriverDetailModel,
   IncomeModel,
   TotalBookingModel,
 } from "./dashboard-model";
@@ -85,6 +87,8 @@ export const DashboardModel = types
     activeTruck: types.optional(ActiveTruckModel, {}),
     bookingHistory: types.optional(types.map(BookingHistoryModel), {}),
     income: types.optional(IncomeModel, {}),
+    driverMaps: types.optional(types.map(DriverDetailModel), {}),
+    currentDriverId: types.optional(types.string, ""),
   })
   .views((self) => {
     const views = {
@@ -188,6 +192,11 @@ export const DashboardModel = types
       });
     },
   }))
+  .views((self) => ({
+    get driverDetail() {
+      return self.driverMaps.get(self.currentDriverId);
+    },
+  }))
   .extend(withEnvironment)
   .actions((self) => ({
     getTotalBooking: flow(function* () {
@@ -285,6 +294,20 @@ export const DashboardModel = types
         yield self.operatorDashboardApi.getTotalIncome();
       if (result.kind === "ok") {
         self.income = cast(result.result);
+      }
+      return result;
+    }),
+  }))
+  .actions((self) => ({
+    setCurrentDriverId(id: string) {
+      self.currentDriverId = id;
+    },
+    getDriverDetail: flow(function* (id: string) {
+      const result: RequestGetDriverDetailResult =
+        yield self.operatorDashboardApi.getDriverDetail(id);
+      if (result.kind === "ok") {
+        self.currentDriverId = id;
+        self.driverMaps.set(id, cast(result.result));
       }
       return result;
     }),

@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
-import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import React, { useMemo } from "react";
@@ -140,7 +139,8 @@ export const TableActiveDrivers: React.FC<IProps> = observer(
           render: (_, record) => (
             <Space size="middle">
               <Link
-                href={`/booking/${record.id}`}
+                target="_blank"
+                href={`/driver/${record.id}`}
                 className="text-blue-500 underline"
               >
                 Detail

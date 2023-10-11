@@ -3,6 +3,7 @@ import {
   IActiveTruckSummary,
   IBookingHistory,
   IDriver,
+  IDriverDetail,
   IIncome,
   IPagination,
   ITotalBooking,
@@ -50,8 +51,9 @@ export type RequestGetDriverListResponse = {
 };
 export type RequestGetDriverListResult = Response<RequestGetDriverListResponse>;
 
-export type RequestGetDriverItemResponse = IDriver;
-export type RequestGetDriverItemResult = Response<RequestGetDriverItemResponse>;
+export type RequestGetDriverDetailResponse = IDriverDetail;
+export type RequestGetDriverDetailResult =
+  Response<RequestGetDriverDetailResponse>;
 
 export type RequestGetBookingHistoryResponse = IBookingHistory[];
 export type RequestGetBookingHistoryResult =

@@ -189,7 +189,7 @@ const TrackingMapsCom: React.FC<IProps> = ({
         zIndex={2}
       />
 
-      {driverLocation && (
+      {driverLocation.lat && driverLocation.lng && (
         <Marker
           title="Driver"
           position={driverLocation}
