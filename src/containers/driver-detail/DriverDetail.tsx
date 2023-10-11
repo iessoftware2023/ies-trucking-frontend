@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import dynamic from "next/dynamic";
 import React from "react";
 
-import { OrderStatus } from "@/components/elements";
+import { MapEmpty, OrderStatus } from "@/components/elements";
 import { useStores } from "@/models";
 import { phoneFormat } from "@/utils/string";
 
@@ -55,8 +55,15 @@ export const DriverDetailContainer = observer(() => {
           revenueRatio={revenueData.revenueRatio}
           totalIncomeToday={revenueData.totalIncomeToday}
         />
-        <div className="h-[500px] bg-red-50">
-          <TrackingMap driver={driver} />
+        <div className="flex h-[500px] overflow-hidden rounded-xl">
+          {driver.orders.length ? (
+            <TrackingMap driver={driver} />
+          ) : (
+            <MapEmpty
+              title="No driver location"
+              description="Currently, driver's location information is not available. Please try again later."
+            />
+          )}
         </div>
       </div>
     </div>

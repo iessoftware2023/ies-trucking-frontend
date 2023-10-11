@@ -62,23 +62,21 @@ export const TrackingMap: React.FC<IProps> = ({ driver }) => {
   ]);
 
   return (
-    <div className="h-[500px] bg-red-50">
-      <TrackingMaps
-        origin={origin}
-        destination={destination}
-        driverLocation={{
-          lat: driver.orders.at(0)?.tracking.current?.lat,
-          lng: driver.orders.at(0)?.tracking.current?.lng,
-        }}
-        pickup={{
-          lat: driver.orders.at(0)?.booking?.pickup?.latitude,
-          lng: driver.orders.at(0)?.booking?.pickup?.longitude,
-        }}
-        dropoff={{
-          lat: driver.orders.at(0)?.booking?.dropoff?.latitude,
-          lng: driver.orders.at(0)?.booking?.dropoff?.longitude,
-        }}
-      />
-    </div>
+    <TrackingMaps
+      origin={origin}
+      destination={destination}
+      driverLocation={{
+        lat: driver.orders.at(0)?.tracking.current?.lat,
+        lng: driver.orders.at(0)?.tracking.current?.lng,
+      }}
+      pickup={{
+        lat: driver.orders.at(0)?.booking?.pickup?.latitude,
+        lng: driver.orders.at(0)?.booking?.pickup?.longitude,
+      }}
+      dropoff={{
+        lat: driver.orders.at(0)?.booking?.dropoff?.latitude,
+        lng: driver.orders.at(0)?.booking?.dropoff?.longitude,
+      }}
+    />
   );
 };
