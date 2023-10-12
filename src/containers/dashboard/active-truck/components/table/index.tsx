@@ -34,7 +34,11 @@ dayjs.updateLocale("en", {
 });
 
 const TableTotal: React.FC<{ count: number }> = ({ count }) => {
-  return <span className="font-medium text-gray-500">Total {count} truck</span>;
+  return (
+    <span className="font-medium text-gray-500">
+      Total {count} truck{count > 1 ? "s" : null}
+    </span>
+  );
 };
 
 const TableEmpty: React.FC<{ tabKey: string }> = ({ tabKey }) => {
@@ -140,7 +144,7 @@ export const TableActiveTrucks: React.FC<IProps> = ({
         ),
       },
       {
-        title: "Type of delivery Item",
+        title: "Type of delivery item",
         dataIndex: "truckType",
         key: "truckType",
         width: 250,

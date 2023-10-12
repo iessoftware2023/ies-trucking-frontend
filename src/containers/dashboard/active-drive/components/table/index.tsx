@@ -36,7 +36,11 @@ dayjs.updateLocale("en", {
 });
 
 const TableTotal: React.FC<{ count: number }> = ({ count }) => {
-  return <span className="font-medium text-gray-500">Total {count} truck</span>;
+  return (
+    <span className="font-medium text-gray-500">
+      Total {count} driver{count > 1 ? "s" : null}
+    </span>
+  );
 };
 
 const TableEmpty: React.FC<{ tabKey: string }> = ({ tabKey }) => {
@@ -105,28 +109,30 @@ export const TableActiveDrivers: React.FC<IProps> = observer(
           ),
         },
         {
-          title: "Phone Number",
+          title: "Phone number",
           dataIndex: "phoneNumber",
           key: "phoneNumber",
           width: 100,
           render: (text) => <span>{phoneFormat(text)}</span>,
         },
         {
-          title: "Type of Truck",
+          title: "Type of truck",
           dataIndex: "truckType",
           key: "truckType",
           width: 256,
-          render: (_, record) => (
+          render: (truckType: ITableRow["truckType"]) => (
             <div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={encodeURI(
-                  `/icons/truck-types/png/${record.truckType?.name}.png`
-                )}
-                alt=""
-                className="mb-0.5 h-3"
-              />
-              <span>{record.truckType?.name}</span>
+              {truckType?.name ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={encodeURI(
+                    `/icons/truck-types/png/${truckType?.name}.png`
+                  )}
+                  alt={truckType.name}
+                  className="mb-0.5 h-3"
+                />
+              ) : null}
+              <span>{truckType?.name || "Empty"}</span>
             </div>
           ),
         },

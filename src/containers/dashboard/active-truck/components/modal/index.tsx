@@ -37,12 +37,13 @@ export const ListActiveTruckModal: React.FC<IProps> = ({
   };
   return (
     <Modal
-      title="Active Trucks"
+      title="Truck List"
       open={isModalOpen}
       onOk={handleOk}
       onCancel={handleCancel}
       width="90%"
       style={{ top: 32, bottom: 32 }}
+      footer={null}
     >
       <div className="relative grid grid-cols-[250px_1fr]">
         <div className="sticky inset-y-0 left-0 h-full">
