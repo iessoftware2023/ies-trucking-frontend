@@ -95,7 +95,7 @@ export const BookingHistory = () => {
         enabled: false,
       },
       tooltip: {
-        xDateFormat: "%d/%m/%Y %H:%M",
+        xDateFormat: "%d/%m/%Y",
         headerFormat: '<span style="font-size:12px">{point.key}</span><table>',
         pointFormat:
           '<tr><td style="">{series.name}: </td>' +
