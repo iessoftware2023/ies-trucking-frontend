@@ -44,7 +44,7 @@ export const TodayIncome: React.FC<IProps> = ({
               }
             )}
           >
-            {revenueRatio}%
+            {Math.abs(revenueRatio)}%
           </div>
         </div>
       </div>

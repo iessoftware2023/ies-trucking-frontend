@@ -64,7 +64,7 @@ export const TodayIncome = () => {
                   }
                 )}
               >
-                {dashboardStore.income.revenueRatio}%
+                {Math.abs(dashboardStore.income.revenueRatio)}%
               </div>
             </div>
           </div>
