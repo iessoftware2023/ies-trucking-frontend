@@ -7,7 +7,7 @@ const DashboardPage = () => {
   return (
     <LayoutBase
       title="Dashboard"
-      headerTitle="Dashboard"
+      headerTitle="Today's Statistics"
       menuActiveKey="DASHBOARD"
     >
       <DashboardContainer />

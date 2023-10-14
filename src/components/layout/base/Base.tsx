@@ -54,6 +54,7 @@ export const LayoutBase: React.FC<IProps> = observer(
               user={authStore.user}
               collapsed={collapsed}
               onLogoutClick={handleLogoutClick}
+              isDashboard={menuActiveKey === "DASHBOARD"}
             />
 
             <main>{children}</main>

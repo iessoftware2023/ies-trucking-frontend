@@ -1,15 +1,20 @@
 import { ArrowLeftOutlined, DownOutlined } from "@ant-design/icons";
-import { Button, Dropdown } from "antd";
+import { Button, Dropdown, Tag } from "antd";
 import clsx from "clsx";
+import dayjs from "dayjs";
+import LocalizedFormat from "dayjs/plugin/localizedFormat";
 import React from "react";
 
 import { UserAvatar } from "@/components/elements";
 import { IUser } from "@/models";
 
+dayjs.extend(LocalizedFormat);
+
 type IProps = {
   title?: string;
   user: IUser;
   collapsed: boolean;
+  isDashboard: boolean;
   onBackClick?: React.MouseEventHandler<HTMLAnchorElement> &
     React.MouseEventHandler<HTMLButtonElement>;
   onLogoutClick: React.MouseEventHandler<HTMLAnchorElement>;
@@ -19,6 +24,7 @@ export const Header: React.FC<IProps> = ({
   title = "Tracking",
   user,
   collapsed,
+  isDashboard,
   onBackClick,
   onLogoutClick,
 }) => {
@@ -43,8 +49,21 @@ export const Header: React.FC<IProps> = ({
                 onClick={onBackClick}
               />
             )}
-
-            <span>{title}</span>
+            {isDashboard ? (
+              <div className="flex flex-row items-center gap-x-10">
+                <div className="flex flex-col gap-y-0.5">
+                  <span className="font-Inter text-xl font-medium text-[#525256]">
+                    {title}
+                  </span>
+                  <span className="font-Inter text-sm font-normal text-[#A3A3A3]">
+                    {dayjs(new Date()).format("lll")}
+                  </span>
+                </div>
+                <Tag className="border-[#11F] py-1 px-3 text-[#11F]">Today</Tag>
+              </div>
+            ) : (
+              <span>{title}</span>
+            )}
           </div>
 
           <Dropdown
