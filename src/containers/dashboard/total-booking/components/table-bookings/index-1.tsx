@@ -65,7 +65,7 @@ const TableEmpty: React.FC<{ tabKey: string; isLoading: boolean }> = ({
   const emptyTextObj = {
     all: "There are no bookings in your system. Please check the bookings again.",
     order_placed:
-      "Currently, there are no bookings in order placed status. Please check the bookings again.",
+      "Currently, there are no bookings in Order placed status. Please check the bookings again.",
     on_the_way_to_pickup:
       "Currently, there are no bookings in on the way to pick-up status. Please check the bookings again.",
     order_pickup:

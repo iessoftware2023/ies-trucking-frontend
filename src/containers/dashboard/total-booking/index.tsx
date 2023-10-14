@@ -131,7 +131,7 @@ export const TotalBooking: React.FC = observer(() => {
 
   const handleAssignDriver = async (id: string, driverId: string) => {
     const api =
-      tabKey === "WAITING_ASSIGN"
+      tabKey === "assigning_driver"
         ? operatorStore.bookingStore.assignDriver
         : operatorStore.orderStore.assignDriver;
     const res = await api(id, driverId);

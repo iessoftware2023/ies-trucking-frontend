@@ -68,6 +68,7 @@ export const TotalBookingModal: React.FC<IProps> = ({
       onCancel={handleCancel}
       width="90%"
       style={{ top: 32, bottom: 32 }}
+      footer={null}
     >
       <div className="relative grid grid-cols-[250px_1fr]">
         <SideBar
@@ -78,6 +79,7 @@ export const TotalBookingModal: React.FC<IProps> = ({
         <div className="min-h-[500px] overflow-hidden">
           <TableBookings
             tabKey={tabKey}
+            statusKey={props.tabKey}
             data={tableData}
             isLoading={isLoading}
             pagination={pagination}

@@ -29,12 +29,17 @@ import {
 
 const bookingStatuses = [
   {
-    title: "Order Placed",
+    title: "Assigning driver",
+    status: "assigning_driver",
+    color: "#FFD495",
+  },
+  {
+    title: "Order placed",
     color: "#E88B00",
     status: "order_placed",
   },
   {
-    title: "On the Way to Pickup",
+    title: "On the way to pickup",
     color: "#00DAE8",
     status: "on_the_way_to_pickup",
   },
@@ -106,21 +111,12 @@ export const DashboardModel = types
         return self.totalBooking.data.find((d) => d.status === status);
       },
       get totalBookingAnalytics() {
-        return [
-          {
-            title: "Assigning Driver",
-            status: "assigning_driver",
-            color: "#FFD495",
-            count:
-              self.totalBooking.total - sumBy(self.totalBooking.data, "count"),
-          },
-          ...bookingStatuses.map((item) => {
-            return {
-              ...item,
-              count: views.getItem(item.status)?.count ?? 0,
-            };
-          }),
-        ];
+        return bookingStatuses.map((item) => {
+          return {
+            ...item,
+            count: views.getItem(item.status)?.count ?? 0,
+          };
+        });
       },
       get totalBookingStatuses() {
         return [

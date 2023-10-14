@@ -89,21 +89,32 @@ const TableTotal: React.FC<{ tabKey: ITrackingTabKey; count: number }> = ({
   );
 };
 
-const TableEmpty: React.FC<{ tabKey: ITrackingTabKey }> = ({ tabKey }) => {
+const TableEmpty: React.FC<{ statusKey: string }> = ({ statusKey }) => {
+  const emptyTextObj = {
+    all: "There are no bookings in your system. Please check the bookings again.",
+    assigning_driver:
+      "Currently, there are no bookings in assigning driver status. Please check the bookings again.",
+    order_placed:
+      "Currently, there are no bookings in order placed status. Please check the bookings again.",
+    on_the_way_to_pickup:
+      "Currently, there are no bookings in on the way to pick-up status. Please check the bookings again.",
+    order_pickup:
+      "Currently, there are no bookings in pick-up order status. Please check the bookings again.",
+    on_the_way_to_dropoff:
+      "Currently, there are no bookings in on the way to delivery status. Please check the bookings again.",
+    completed:
+      "Currently, there are no bookings in delivery completed status. Please check the bookings again.",
+    cancelled:
+      "Currently, there are no bookings in order cancelled status. Please check the bookings again.",
+  };
   return (
     <div className="flex flex-col items-center p-8">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/images/empty-booking@2x.png" className="mb-2 h-40" alt="" />
 
-      <div className="text-lg font-semibold text-gray-800">
-        Your {tabKey === "WAITING_ASSIGN" ? "booking" : "order"} is empty
-      </div>
+      <div className="text-lg font-semibold text-gray-800">No bookings</div>
 
-      <div className="text-base">
-        Make it easier to receive{" "}
-        {tabKey === "WAITING_ASSIGN" ? "booking" : "order"} and track everything
-        here
-      </div>
+      <div className="text-base">{emptyTextObj[statusKey]}</div>
     </div>
   );
 };
@@ -137,6 +148,7 @@ export interface ITableRow {
 
 type IProps = {
   tabKey: ITrackingTabKey;
+  statusKey: string;
   pagination: {
     total: number;
     page: number;
@@ -155,6 +167,7 @@ type IProps = {
 
 export const TableBookings: React.FC<IProps> = ({
   tabKey,
+  statusKey,
   data = [],
   isLoading,
   pagination,
@@ -210,7 +223,7 @@ export const TableBookings: React.FC<IProps> = ({
               !checkCanAssignDriver(
                 record.status.bookingStatus,
                 record.status.orderStatus
-              )
+              ) || dayjs().isAfter(dayjs(record.pickUpTime))
             }
           />
         ),
@@ -373,7 +386,7 @@ export const TableBookings: React.FC<IProps> = ({
         showTotal: (total) => <TableTotal tabKey={tabKey} count={total} />,
       }}
       locale={{
-        emptyText: <TableEmpty tabKey={tabKey} />,
+        emptyText: <TableEmpty statusKey={statusKey} />,
       }}
     />
   );

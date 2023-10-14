@@ -2,7 +2,7 @@ export const BOOKING_STATUS_OBJ = {
   pending: {
     bg: "#E6F6F4",
     color: "#008774",
-    text: "Assigning Driver",
+    text: "Assigning driver",
   },
   confirmed: {
     bg: "#E6F6F4",
