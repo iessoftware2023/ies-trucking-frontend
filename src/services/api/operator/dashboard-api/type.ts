@@ -4,6 +4,7 @@ import {
   IBookingHistory,
   IDriver,
   IDriverDetail,
+  IGeoLocation,
   IIncome,
   IPagination,
   ITotalBooking,
@@ -64,3 +65,7 @@ export type RequestGetBookingHistoryResult =
 export type RequestGetTotalIncomeResponse = IIncome;
 export type RequestGetTotalIncomeResult =
   Response<RequestGetTotalIncomeResponse>;
+
+export type RequestGetGeoLocationResponse = IGeoLocation;
+export type RequestGetGeoLocationResult =
+  Response<RequestGetGeoLocationResponse>;

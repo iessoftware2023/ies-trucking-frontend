@@ -1,6 +1,6 @@
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import envGlobal from "env";
-import React, { memo, useCallback, useEffect } from "react";
+import React, { memo, useCallback } from "react";
 
 const { GOOGLE_MAPS_API_KEY } = envGlobal();
 
@@ -28,28 +28,12 @@ type IProps = {
 };
 
 const ParkingMapsCom: React.FC<IProps> = ({ parkingLocation }) => {
-  console.log("📢 parkingLocation", parkingLocation);
-
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
   });
 
   const mapRef = React.useRef<google.maps.Map | null>(null);
-
-  const fitBounds = useCallback((bounds: google.maps.LatLngBounds) => {
-    if (!bounds || !mapRef.current) {
-      return;
-    }
-
-    mapRef.current &&
-      mapRef.current.fitBounds(bounds, {
-        bottom: 56,
-        left: 56,
-        right: 56,
-        top: 56,
-      });
-  }, []);
 
   const handleMapLoad = useCallback(
     (map: google.maps.Map) => {

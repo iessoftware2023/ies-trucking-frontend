@@ -262,6 +262,44 @@ export const TruckDetailModel = types.model("TruckDetailModel", {
   revenueData: types.optional(RevenueData, {}),
 });
 
+const ParkingLocation = types.model("ParkingLocation", {
+  id: types.optional(types.string, ""),
+  name: types.optional(types.string, ""),
+  location: types.optional(
+    types.model({
+      lat: types.maybeNull(types.number),
+      lng: types.maybeNull(types.number),
+    }),
+    {}
+  ),
+  totalTrucks: types.optional(types.number, 0),
+});
+
+const TruckLocation = types.model("TruckLocation", {
+  licensePlate: types.optional(types.string, ""),
+  location: types.optional(
+    types.model({
+      lat: types.maybeNull(types.number),
+      lng: types.maybeNull(types.number),
+    }),
+    {}
+  ),
+});
+
+export const GeoLocationModel = types
+  .model("GeoLocationModel", {
+    parkings: types.optional(types.map(ParkingLocation), {}),
+    trucks: types.optional(types.map(TruckLocation), {}),
+  })
+  .views((self) => ({
+    get parkingLocationView() {
+      return Array.from(self.parkings.values());
+    },
+    get truckLocationView() {
+      return Array.from(self.trucks.values());
+    },
+  }));
+
 export type ITotalBooking = Instance<typeof TotalBookingModel>;
 
 export type IActiveTruckSummary = Instance<typeof ActiveTruckSummaryModel>;
@@ -278,3 +316,8 @@ export type IIncome = Instance<typeof IncomeModel>;
 export type IDriverDetail = Instance<typeof Driver>;
 
 export type ITruckDetail = Instance<typeof Truck>;
+
+export type IGeoLocation = {
+  parkings: Instance<typeof ParkingLocation>[];
+  trucks: Instance<typeof TruckLocation>[];
+};

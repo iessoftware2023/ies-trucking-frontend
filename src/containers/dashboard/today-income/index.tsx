@@ -48,7 +48,15 @@ export const TodayIncome = () => {
                 {dashboardStore.income.totalIncomeToday.total ?? 0}
               </div>
             </div>
-            <div className="flex items-center justify-center gap-1 rounded bg-emerald-50 px-1 py-0.5">
+            <div
+              className={classNames(
+                "flex items-center justify-center gap-1 rounded px-1 py-0.5",
+                {
+                  "bg-[#ECFDF5]": dashboardStore.income.revenueRatio >= 0,
+                  "bg-red-50": dashboardStore.income.revenueRatio < 0,
+                }
+              )}
+            >
               {dashboardStore.income.revenueRatio >= 0 ? (
                 <RiseOutlined className="text-xs text-teal-500" />
               ) : (

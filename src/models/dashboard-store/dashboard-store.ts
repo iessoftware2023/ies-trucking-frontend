@@ -10,6 +10,7 @@ import {
   RequestGetBookingHistoryResult,
   RequestGetDriverDetailResult,
   RequestGetDriverListResult,
+  RequestGetGeoLocationResult,
   RequestGetTotalBookingResult,
   RequestGetTotalIncomeResult,
   RequestGetTruckDetailResult,
@@ -20,6 +21,7 @@ import {
   ActiveTruckModel,
   BookingHistoryModel,
   DriverDetailModel,
+  GeoLocationModel,
   IncomeModel,
   TotalBookingModel,
   TruckDetailModel,
@@ -85,14 +87,18 @@ export const DashboardModel = types
   .model("DashboardModel")
   .props({
     totalBooking: types.optional(TotalBookingModel, {}),
-    activeDriver: types.optional(ActiveDriverModel, {}),
-    activeTruck: types.optional(ActiveTruckModel, {}),
     bookingHistory: types.optional(types.map(BookingHistoryModel), {}),
     income: types.optional(IncomeModel, {}),
+    // Driver
+    activeDriver: types.optional(ActiveDriverModel, {}),
     driverMaps: types.optional(types.map(DriverDetailModel), {}),
     currentDriverId: types.optional(types.string, ""),
+    // Truck
+    activeTruck: types.optional(ActiveTruckModel, {}),
     truckMaps: types.optional(types.map(TruckDetailModel), {}),
     currentTruckId: types.optional(types.string, ""),
+    // Tracking Location
+    geoLocation: types.optional(GeoLocationModel, {}),
   })
   .views((self) => {
     const views = {
@@ -331,6 +337,24 @@ export const DashboardModel = types
       if (result.kind === "ok") {
         self.currentTruckId = id;
         self.truckMaps.set(id, cast(result.result));
+      }
+      return result;
+    }),
+  }))
+  .actions((self) => ({
+    getGeoLocation: flow(function* () {
+      const result: RequestGetGeoLocationResult =
+        yield self.operatorDashboardApi.getGeoLocation();
+      if (result.kind === "ok") {
+        result.result.trucks.forEach((truckLocation) => {
+          self.geoLocation.trucks.set(truckLocation.id, cast(truckLocation));
+        });
+        result.result.parkings.forEach((parkingLocation) => {
+          self.geoLocation.parkings.set(
+            parkingLocation.id,
+            cast(parkingLocation)
+          );
+        });
       }
       return result;
     }),

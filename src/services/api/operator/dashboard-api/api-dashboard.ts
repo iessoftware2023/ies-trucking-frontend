@@ -23,6 +23,7 @@ const routes = {
   bookingHistory: () => `${prefix}/booking-history`,
   // income
   income: () => `${prefix}/total-income`,
+  geoLocations: () => `${prefix}/truck/geo-location`,
 };
 
 export const OperatorDashboardApi = {
@@ -110,6 +111,12 @@ export const OperatorDashboardApi = {
   async getTotalIncome(): Promise<Types.RequestGetTotalIncomeResult> {
     const url = routes.income();
     const result: ApiResponse<Types.RequestGetTotalIncomeResponse> =
+      await api.get(url);
+    return returnResponse(result);
+  },
+  async getGeoLocation(): Promise<Types.RequestGetGeoLocationResult> {
+    const url = routes.geoLocations();
+    const result: ApiResponse<Types.RequestGetGeoLocationResponse> =
       await api.get(url);
     return returnResponse(result);
   },
