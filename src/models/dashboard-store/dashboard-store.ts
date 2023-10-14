@@ -343,7 +343,10 @@ export const DashboardModel = types
         yield self.operatorDashboardApi.getGeoLocation();
       if (result.kind === "ok") {
         result.result.trucks.forEach((truckLocation) => {
-          self.geoLocation.trucks.set(truckLocation.id, cast(truckLocation));
+          self.geoLocation.trucks.set(
+            truckLocation.licensePlate,
+            cast(truckLocation)
+          );
         });
         result.result.parkings.forEach((parkingLocation) => {
           self.geoLocation.parkings.set(
