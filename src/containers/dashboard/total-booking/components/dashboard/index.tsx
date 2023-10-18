@@ -67,7 +67,7 @@ export const TotalBookingDashboard: React.FC<IProps> = ({
                 </span>
               </div>
               <div className="flex flex-col gap-2.5 pl-1.5">
-                <div className="font-Inter text-lg font-semibold leading-relaxed text-zinc-800">
+                <div className="font-Inter text-lg font-semibold leading-relaxed text-zinc-600">
                   {analytic.count}
                 </div>
               </div>

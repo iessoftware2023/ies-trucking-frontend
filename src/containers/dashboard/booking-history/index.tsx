@@ -81,6 +81,11 @@ export const BookingHistory = () => {
       time: {
         useUTC: false,
       },
+      yAxis: {
+        title: {
+          text: "Total bookings",
+        },
+      },
       xAxis: {
         showEmpty: false,
         type: "datetime",

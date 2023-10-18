@@ -51,7 +51,7 @@ const TableEmpty: React.FC<{ tabKey: string }> = ({ tabKey }) => {
     order_pickup:
       "Currently, there are no trucks in on the way to pick-up order status. Please check the trucks again.",
     on_the_way_to_dropoff:
-      "Currently, there are no trucks in on the way to delivery status. Please check the trucks again.",
+      "Currently, there are no trucks in on the way to delivery status. \nPlease check the trucks again.",
     inactive:
       "Currently, there are no trucks in inactive status. Please check the trucks again.",
   };
@@ -63,8 +63,10 @@ const TableEmpty: React.FC<{ tabKey: string }> = ({ tabKey }) => {
         className="h-40"
         alt="empty truck"
       />
-      <div className="text-lg font-semibold text-gray-800">No trucks</div>
-      <div className="max-w-[370px] text-base">{emptyTextObj[tabKey]}</div>
+      <div className="text-lg font-semibold text-gray-800">No drivers</div>
+      <div className="max-w-[420px] whitespace-pre-line text-base">
+        {emptyTextObj[tabKey]}
+      </div>
     </div>
   );
 };

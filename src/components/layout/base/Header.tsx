@@ -3,7 +3,7 @@ import { Button, Dropdown, Tag } from "antd";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { UserAvatar } from "@/components/elements";
 import { IUser } from "@/models";
@@ -28,6 +28,21 @@ export const Header: React.FC<IProps> = ({
   onBackClick,
   onLogoutClick,
 }) => {
+  const [, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const now = new Date();
+    const timeUntilNextMinute = 60 - now.getSeconds();
+    setTimeout(() => {
+      setCurrentTime(new Date());
+      const intervalId = setInterval(() => {
+        setCurrentTime(new Date());
+      }, 60 * 1000);
+
+      return () => clearInterval(intervalId);
+    }, timeUntilNextMinute * 1000);
+  }, []);
+
   return (
     <>
       <header className="fixed right-0 top-0 z-50 w-full">
@@ -56,7 +71,7 @@ export const Header: React.FC<IProps> = ({
                     {title}
                   </span>
                   <span className="font-Inter text-sm font-normal text-[#A3A3A3]">
-                    {dayjs(new Date()).format("lll")}
+                    {dayjs().format("lll")}
                   </span>
                 </div>
                 <Tag className="border-[#11F] py-1 px-3 text-[#11F]">Today</Tag>

@@ -15,8 +15,8 @@ import {
 } from "./components/table-bookings/utils";
 
 export const TotalBooking: React.FC = observer(() => {
-  const [noti] = notification.useNotification();
-  const { confirmDialog } = useConfirmDialog();
+  const [noti, notiContextHolder] = notification.useNotification();
+  const { confirmDialog, modalContextHolder } = useConfirmDialog();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tabKey, setTabKey] = useState<string>("all");
@@ -259,6 +259,8 @@ export const TotalBooking: React.FC = observer(() => {
         onCancelBooking={handleCancelBooking}
         onCancelOrder={handleCancelOrder}
       />
+      {notiContextHolder}
+      {modalContextHolder}
     </>
   );
 });
