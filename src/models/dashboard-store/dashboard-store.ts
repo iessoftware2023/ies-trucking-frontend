@@ -39,7 +39,7 @@ const bookingStatuses = [
     status: "order_placed",
   },
   {
-    title: "On the way to pickup",
+    title: "On the way to pick-up",
     color: "#00DAE8",
     status: "on_the_way_to_pickup",
   },

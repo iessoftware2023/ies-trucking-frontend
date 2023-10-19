@@ -45,15 +45,15 @@ const TableTotal: React.FC<{ count: number }> = ({ count }) => {
 
 const TableEmpty: React.FC<{ tabKey: string }> = ({ tabKey }) => {
   const emptyTextObj = {
-    all: "There are no trucks in your system. Please check the trucks again.",
+    all: "There are no drivers in your system. Please check the drivers again.",
     on_the_way_to_pickup:
-      "Currently, there are no trucks in on the way to pick-up status. Please check the trucks again.",
+      "Currently, there are no drivers in on the way to pick-up status. Please check the drivers again.",
     order_pickup:
-      "Currently, there are no trucks in on the way to pick-up order status. Please check the trucks again.",
+      "Currently, there are no drivers in on the way to pick-up order status. Please check the drivers again.",
     on_the_way_to_dropoff:
-      "Currently, there are no trucks in on the way to delivery status. \nPlease check the trucks again.",
+      "Currently, there are no drivers in on the way to delivery status. Please check the drivers again.",
     inactive:
-      "Currently, there are no trucks in inactive status. Please check the trucks again.",
+      "Currently, there are no drivers in inactive status. Please check the drivers again.",
   };
   return (
     <div className="flex flex-col items-center gap-y-2 p-8">
@@ -64,7 +64,7 @@ const TableEmpty: React.FC<{ tabKey: string }> = ({ tabKey }) => {
         alt="empty truck"
       />
       <div className="text-lg font-semibold text-gray-800">No drivers</div>
-      <div className="max-w-[420px] whitespace-pre-line text-base">
+      <div className="whitespace-pre-line px-6 text-base">
         {emptyTextObj[tabKey]}
       </div>
     </div>
